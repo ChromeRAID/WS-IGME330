@@ -1,4 +1,18 @@
   //Breed Lists
+export class DogData{
+
+let IMAGE_SIZE;
+let NUM_CLASSES;
+let NUM_DATASET_ELEMENTS;
+
+const TRAIN_TEST_RATIO = 5 / 6;
+
+const NUM_TRAIN_ELEMENTS = Math.floor(TRAIN_TEST_RATIO * NUM_DATASET_ELEMENTS);
+const NUM_TEST_ELEMENTS = NUM_DATASET_ELEMENTS - NUM_TRAIN_ELEMENTS;
+
+
+	
+	
 let breeds = ["hound","terrier","spaniel","retriever","labrador"];
 let images = {};
 for(let i = 0; i<breeds.length; i++){
@@ -36,45 +50,6 @@ function dataLoaded(e){
 }
 
 
-/**
- * @license
- * Copyright 2018 Google LLC. All Rights Reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * =============================================================================
- */
-
-
-const IMAGE_SIZE = 16384;
-const NUM_CLASSES = 10;
-const NUM_DATASET_ELEMENTS = 65000;
-
-const TRAIN_TEST_RATIO = 5 / 6;
-
-const NUM_TRAIN_ELEMENTS = Math.floor(TRAIN_TEST_RATIO * NUM_DATASET_ELEMENTS);
-const NUM_TEST_ELEMENTS = NUM_DATASET_ELEMENTS - NUM_TRAIN_ELEMENTS;
-
-const MNIST_IMAGES_SPRITE_PATH =
-    'https://storage.googleapis.com/learnjs-data/model-builder/mnist_images.png';
-const MNIST_LABELS_PATH =
-    'https://storage.googleapis.com/learnjs-data/model-builder/mnist_labels_uint8';
-
-/**
- * A class that fetches the sprited MNIST dataset and returns shuffled batches.
- *
- * NOTE: This will get much easier. For now, we do data fetching and
- * manipulation manually.
- */
-export class DogData_Class {
   constructor() {
     this.shuffledTrainIndex = 0;
     this.shuffledTestIndex = 0;
@@ -160,8 +135,8 @@ export class DogData_Class {
   }
 
   nextBatch(batchSize, data, index) {
-    const batchImagesArray = new Float32Array(batchSize * IMAGE_SIZE);
-    const batchLabelsArray = new Uint8Array(batchSize * NUM_CLASSES);
+    let ImageArray = new Float32Array(batchSize * IMAGE_SIZE);
+    const batchLabelsArray = new StringArray(batchSize * NUM_CLASSES);
 
     for (let i = 0; i < batchSize; i++) {
       const idx = index();
@@ -180,4 +155,6 @@ export class DogData_Class {
 
     return {xs, labels};
   }
+
+
 }

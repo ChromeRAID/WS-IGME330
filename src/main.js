@@ -1,5 +1,5 @@
 
-import {DogData} from './dogData.js';
+import {MnistData} from './data.js';
 async function showExamples(data) {
     // Create a container in the visor
     const surface =
