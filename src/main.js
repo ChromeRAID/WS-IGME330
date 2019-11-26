@@ -1,19 +1,5 @@
-import {DogData} from './dogData.js';
-let app = new Vue({
-	el: '#root',
-	data: {
-		newName: "",
-		names: ["Adam","Betty","Charlie","Doris"],
-        title: 'Custom Title'
-	},
-	methods:{
-		addName(){
-			if (!this.newName) return;
-			this.names.push(this.newName);
-			this.newName = "";
-		}
-	}
-});
+import {MnistData} from './data.js';
+
 async function showExamples(data) {
     // Create a container in the visor
     const surface =
@@ -44,6 +30,7 @@ async function showExamples(data) {
 }
 
 async function run() {  
+	console.log("Running");
     const data = new MnistData();
     await data.load();
     await showExamples(data);
