@@ -48,36 +48,54 @@ function parse_images(array){
 	let img = new Image();
 	let canvas = document.querySelector("#mainCanvas");
 	let ctx = canvas.getContext("2d");
-	console.log(array);
 	let datasetBytesBuffer = new ArrayBuffer(IMAGE_SIZE * 4 * array.length);
 	let datasetImages;
 	
-	for(let i = 0; i<array.length;i++){
-		let imageRequest = new Promise((resolve,reject)=>{
-			img.crossorigin = 'anonymous';
-			img.onload = () => {
-				img.width = img.naturalWidth;
-				img.height = img.naturalHeight;
-
-				canvas.width = img.width;
-				canvas.height = img.height;
-
-				ctx.drawImage(img,0,0,128,128);
-
-				let imageData = ctx.getImageData(0,0,128,128);
-
-				for(let j = 0; j<imageData.data.length; j++ ){
-					datasetBytesBuffer[j+IMAGE_SIZE*i] = imageData.data[j]/255;
-				}
-				datasetImages = new Float32Array(datasetBytesBuffer);
-				
-				resolve();
-			};
-			img.src = array[i];
-					
-			
-		});
-	}
+	let headers = new Headers({'Access-Control-Allow-Orgin':'*'});
+	let options = {
+		method: 'GET',
+  		mode: 'cors',
+		headers: headers,
+  		cache: 'default'
+	};
+	
+	let request = new Request(array[0]);
+	let imageStr;
+	let image;
+	fetch(request,options).then((response) => {
+		response.arrayBuffer().then((buff) => {
+			imageStr = arrayBufferToBase64(buff);
+			image = document.createElement("img");
+			image.src="data:image/jpeg;" +imageStr;
+			document.appendChild(image);
+	    });		   
+    });
+//	for(let i = 0; i<array.length;i++){
+//		let imageRequest = new Promise((resolve,reject)=>{
+//			img.onload = () => {
+//				img.width = img.naturalWidth;
+//				img.height = img.naturalHeight;
+//
+//				canvas.width = img.width;
+//				canvas.height = img.height;
+//				
+//
+//				ctx.drawImage(img,0,0,128,128);
+//
+//				let imageData = ctx.getImageData(0,0,128,128);
+//
+//				for(let j = 0; j<imageData.data.length; j++ ){
+//					datasetBytesBuffer[j+IMAGE_SIZE*i] = imageData.data[j]/255;
+//				}
+//				datasetImages = new Float32Array(datasetBytesBuffer);
+//				
+//				resolve();
+//			};
+//			img.src = array[i];
+//					
+//			
+//		});
+//	}
   //parts = tf.strings.split(file_path, '/');
   //label = parts[-2];
 
@@ -87,9 +105,18 @@ function parse_images(array){
   //image = tf.image.resize(image, [128, 128]);
   //return image;
 }
+	
+function arrayBufferToBase64(buffer) {
+  var binary = '';
+  var bytes = [].slice.call(new Uint8Array(buffer));
 
-let file_path = images["hound"];
-let image, label = parse_images(file_path);
+  bytes.forEach((b) => binary += String.fromCharCode(b));
+
+  return window.btoa(binary);
+};
+
+//let file_path = images["hound"];
+//let image, label = parse_images(file_path);
 function show(image, label){
   plt.figure();
   plt.imshow(image)
@@ -97,7 +124,7 @@ function show(image, label){
   plt.axis('off');
 }
 
-show(image, label);
+//show(image, label);
 
 }
 
