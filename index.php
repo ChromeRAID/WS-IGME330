@@ -24,11 +24,15 @@
         	<img id="img" v-bind:src="image" width="227" height="227" />
     	</div>
     </div>
+    <canvas id="mainCanvas" width=128 height=128>
+    	
+    </canvas>
 		<!-- #1 - link to Firebase goes here  -->
 <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-database.js"></script>
-    <script>
+
+<script>
 		function loadSelected(){
 			let savedID = localStorage.getItem("sru-proj2");
 			if(savedID == undefined){
@@ -124,7 +128,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.0.2/dist/tfjs-vis.umd.min.js"></script>
 	<!--<script type="module" src="src/main.js"></script>-->
-
+	<script type=module src="src/main.js"></script>
 
     <!-- TODO: Add SDKs for Firebase products that you want to use
     https://firebase.google.com/docs/web/setup#available-libraries -->
