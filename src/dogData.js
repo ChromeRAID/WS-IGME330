@@ -13,7 +13,7 @@ for(let i = 0; i<breeds.length; i++){
 
 function getData(breed){
     let url = "https://dog.ceo/api/breed/"+breed+"/images";
-
+	//let url = "https://images.dog.ceo/breeds/hound-english/n02089973_48.jpg";
     //Create a new XHR object
     let xhr = new XMLHttpRequest();
 
@@ -30,6 +30,8 @@ function getData(breed){
 	
 }
 
+parse_images(null);
+	
 function dataError(){
     console.log("ERROR LOADING DATA");
     console.log("ABORTING...");
@@ -41,35 +43,54 @@ function dataLoaded(e){
     let JSONObj = JSON.parse(e.target.responseText);
     images[breed] = JSONObj.message;
 	parse_images(JSONObj.message);
-
+	console.log(e);
 }
 
 function parse_images(array){
-	let img = new Image();
-	let canvas = document.querySelector("#mainCanvas");
-	let ctx = canvas.getContext("2d");
-	let datasetBytesBuffer = new ArrayBuffer(IMAGE_SIZE * 4 * array.length);
-	let datasetImages;
+	//let img = new Image();
+	//let canvas = document.querySelector("#mainCanvas");
+	//let ctx = canvas.getContext("2d");
+	//let datasetBytesBuffer = new ArrayBuffer(IMAGE_SIZE * 4 * array.length);
+	//let datasetImages;
 	
-	let headers = new Headers({'Access-Control-Allow-Orgin':'*'});
-	let options = {
-		method: 'GET',
-  		mode: 'cors',
-		headers: headers,
-  		cache: 'default'
-	};
+	//let headers = new Headers({'x-api-key':'396b45cb-4a1c-4d29-bda4-b97f41bf322f'});
+//	let options = {
+//		method: 'GET',
+//  		mode: 'cors',
+//		headers: headers,
+//  		cache: 'default'
+//	};
+//	
+//	let request = new Request("https://cdn2.thedogapi.com/images/lq5gBjy4s.jpg");
+//	let imageStr;
+//	let image;
+//	fetch(request,options).then((response) => {
+//		response.arrayBuffer().then((buff) => {
+//			imageStr = arrayBufferToBase64(buff);
+//			image = document.createElement("img");
+//			image.src="data:image/jpeg;" +imageStr;
+//			image.crossOrigin = "Anonymous";
+//			document.appendChild(image);
+//			
+//	    });		   
+//    });
 	
-	let request = new Request(array[0]);
-	let imageStr;
-	let image;
-	fetch(request,options).then((response) => {
-		response.arrayBuffer().then((buff) => {
-			imageStr = arrayBufferToBase64(buff);
-			image = document.createElement("img");
-			image.src="data:image/jpeg;" +imageStr;
-			document.appendChild(image);
-	    });		   
-    });
+	
+	let url = "https://cdn2.thedogapi.com/images/lq5gBjy4s.jpg";
+
+    //Create a new XHR object
+    let xhr = new XMLHttpRequest();
+
+    //Set onload Handler
+    xhr.onload = dataLoaded;
+
+    //Set the onerror handler
+    xhr.onerror = dataError;
+
+    //Open connection and set the request
+    xhr.open("GET",url);
+    xhr.send();
+
 //	for(let i = 0; i<array.length;i++){
 //		let imageRequest = new Promise((resolve,reject)=>{
 //			img.onload = () => {

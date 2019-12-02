@@ -19,9 +19,10 @@
         </select>
         <span>Selected: {{ selected }}</span>
         <button type="submit" @click='search'>Search</button>
+        <button type="submit" @click='run'>Run</button>
         <p id="output"></p>
         <div id="console">
-        	<img id="img" v-bind:src="image" width="227" height="227" />
+        	<img id="img" v-bind:src="image" crossorgin = "Anonymous" width="227" height="227" />
     	</div>
     </div>
     <canvas id="mainCanvas" width=128 height=128>
@@ -97,7 +98,20 @@
 							
 
                         })
-                } // end search
+                }, // end search
+				run(){
+					let img = document.querySelector("#img").src;
+					//let canvas = document.querySelector("#mainCanvas");
+					//let ctx = canvas.getContext("2d");
+					//ctx.drawImage(img,0,0,128,128);
+					//console.log(ctx.getImageData(0,0,128,128));
+				  let imageURL = "https://images.dog.ceo/breeds/hound-blood/n02088466_7731.jpg";
+
+				  downloadedImg = new Image;
+				  downloadedImg.crossOrigin = "Anonymous";
+				  downloadedImg.addEventListener("load", imageReceived, false);
+				  downloadedImg.src = imageURL;
+				}
             }
         });
 		function selectChange(e){
@@ -119,6 +133,23 @@
 		function error(val){
 			console.log(error);
 		}
+		function imageReceived() {
+		  let canvas = document.createElement("canvas");
+		  let context = canvas.getContext("2d");
+
+		  canvas.width = downloadedImg.width;
+		  canvas.height = downloadedImg.height;
+
+		  context.drawImage(downloadedImg, 0, 0);
+		  document.body.appendChild(canvas);
+
+		  try {
+			localStorage.setItem("saved-image-example", canvas.toDataURL("image/png"));
+		  }
+		  catch(err) {
+			console.log("Error: " + err);
+		  }  
+		}
     </script>
 
 
@@ -127,7 +158,8 @@
     <!--Tensorflow-->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.0.2/dist/tfjs-vis.umd.min.js"></script>
-	<script type=module src="src/main.js"></script>
+	<!--<script type=module src="src/main.js"></script>-->
+
 
 
     <!-- TODO: Add SDKs for Firebase products that you want to use
