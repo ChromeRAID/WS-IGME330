@@ -26,29 +26,32 @@
 				<form action="#">
 					<p>
 						<label>
-							<input class="with-gap" name="group1"
-								type="radio" />
+							<input type="checkbox" class="filled-in"
+								checked="checked" />
+
 							<span>Option1</span>
 						</label>
 					</p>
 					<p>
 						<label>
-							<input class="with-gap" name="group1"
-								type="radio" />
+							<input type="checkbox" class="filled-in"
+								checked="checked" />
+
 							<span>Option2</span>
 						</label>
 					</p>
 					<p>
 						<label>
-							<input class="with-gap" name="group1"
-								type="radio" />
+							<input type="checkbox" class="filled-in"
+								checked="checked" />
+
 							<span>Option 3</span>
 						</label>
 					</p>
 					<p>
 						<label>
-							<input name="group1" type="radio"
-								disabled="disabled" />
+							<input type="checkbox" class="filled-in"
+								checked="checked" />
 							<span>Option 4</span>
 						</label>
 					</p>
@@ -61,30 +64,39 @@
 
 			<div class="col s5">
 				<div id='root'>
-				<h1>{{guess}}</h1>
+					<h1>{{guess}}</h1>
 					<div id="console">
-						<img class="responsive-img" id="img" v-bind:src="image" crossorgin="Anonymous"
-							width="500" height="500" />
+						<img class="responsive-img" id="img" v-bind:src="image"
+							crossorgin="Anonymous" width="500" height="500" />
 					</div>
 					<div class="input-field col s12">
 
-					<p><input class="btn waves-effect waves-light" id="input" type="file"
-							accept='image/jpeg, image/png' size="50"
-							maxlength="50" autofocus
-							value="Upload image here" /></p>
-					<select class="browser-default" onchange="selectChange(this)"
-						v-model:value="selected">
-						<option v-for="item in options"
-							v-bind:value="item.value">{{item.text}}</option>
-					</select>
-					<span>Selected: {{ selected }}<br></span>
-					<button class="btn waves-effect waves-light" type="submit" @click='search'>Search</button>
-					<button class="btn waves-effect waves-light" type="submit" @click='run'>Run</button>
-					<p id="output"></p>
+						<p><input class="btn waves-effect waves-light"
+								id="input" type="file"
+								accept='image/jpeg, image/png' size="50"
+								maxlength="50" autofocus
+								value="Upload image here" /></p>
+						<select class="browser-default"
+							onchange="selectChange(this)"
+							v-model:value="selected">
+							<option v-for="item in options"
+								v-bind:value="item.value">{{item.text}}</option>
+						</select>
+						<span>Selected: {{ selected }}<br></span>
+						<button class="btn waves-effect waves-light"
+							type="submit" @click='search'>Search</button>
+						<button class="btn waves-effect waves-light"
+							type="submit" @click='run'>Run</button>
+						<!--<p v-bind:disabled="isLoading == false">
+							<div class="progress">
+								<div class="indeterminate"></div>
+							</div>
+						</p>-->
+						<p id="output">{{loadingMessage}}</p>
 
+					</div>
 				</div>
 			</div>
-            </div>
 		</div>
 		<canvas id="mainCanvas" width=128 height=128>
 
@@ -138,12 +150,14 @@
 
 					],
 					url: URL,
-                    guess: "WAITING FOR TRAINING",
+					guess: "WAITING FOR TRAINING",
+					isLoading: false,
+					loadingMessage: "",
 					image: "https://i.imgur.com/JlUvsxa.jpg"
 
 				},
 				created() {
-					loadSelected();
+					//loadSelected();
 				},
 				methods: {
 					search() {
@@ -165,6 +179,7 @@
 							})
 					}, // end search
 					run() {
+						
 						let img = document.querySelector("#img").src;
 						//let canvas = document.querySelector("#mainCanvas");
 						//let ctx = canvas.getContext("2d");
@@ -176,10 +191,10 @@
 						downloadedImg.crossOrigin = "Anonymous";
 						downloadedImg.addEventListener("load", imageReceived, false);
 						downloadedImg.src = imageURL;
-                        
-                        app.guess = "RUNNING MODEL TRAINING PLEASE WAIT";
-                        
-                        createModel();
+
+						app.guess = "RUNNING MODEL TRAINING PLEASE WAIT";
+
+						createModel();
 					}
 				}
 			});
@@ -229,7 +244,7 @@
 			src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
 		<script
 			src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.0.2/dist/tfjs-vis.umd.min.js"></script>
-		<script  src="src/test.js"></script>
+		<script src="src/test.js"></script>
 
 
 
@@ -237,7 +252,7 @@
 	https://firebase.google.com/docs/web/setup#available-libraries -->
 		<!--JavaScript at end of body for optimized loading-->
 		<script type="text/javascript" src="js/materialize.min.js"></script>
-        
+
 	</body>
 
 </html>
