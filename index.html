@@ -133,23 +133,6 @@
 		function error(val){
 			console.log(error);
 		}
-		function imageReceived() {
-		  let canvas = document.createElement("canvas");
-		  let context = canvas.getContext("2d");
-
-		  canvas.width = downloadedImg.width;
-		  canvas.height = downloadedImg.height;
-
-		  context.drawImage(downloadedImg, 0, 0);
-		  document.body.appendChild(canvas);
-
-		  try {
-			localStorage.setItem("saved-image-example", canvas.toDataURL("image/png"));
-		  }
-		  catch(err) {
-			console.log("Error: " + err);
-		  }  
-		}
     </script>
 
 
@@ -159,7 +142,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.0.2/dist/tfjs-vis.umd.min.js"></script>
 	<!--<script type=module src="src/main.js"></script>-->
-
+    <script src="src/test.js"></script>
 
 
     <!-- TODO: Add SDKs for Firebase products that you want to use
