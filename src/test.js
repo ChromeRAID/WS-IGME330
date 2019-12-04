@@ -4,6 +4,10 @@ let catResponse;
 
 let testURLDog = url + "dogs"
 let testURLCats = url + "cats"
+let status = {
+    isFinished: 1,
+    message: ""
+};
 //let url = "https://images.dog.ceo/breeds/hound-english/n02089973_48.jpg";
 //Create a new XHR object
 let xhr = new XMLHttpRequest();
@@ -14,8 +18,8 @@ xhr.onload = dataLoaded;
 xhr.onerror = dataError;
 
 //Open connection and set the request
-xhr.open("GET",testURLDog);
-xhr.setRequestHeader("Authorization","Client-ID 1226bd29241e849");
+xhr.open("GET", testURLDog);
+xhr.setRequestHeader("Authorization", "Client-ID 1226bd29241e849");
 xhr.send();
 
 
@@ -27,24 +31,23 @@ xhrC.onload = dataLoaded;
 xhrC.onerror = dataError;
 
 //Open connection and set the request
-xhrC.open("GET",testURLCats);
-xhrC.setRequestHeader("Authorization","Client-ID 1226bd29241e849");
+xhrC.open("GET", testURLCats);
+xhrC.setRequestHeader("Authorization", "Client-ID 1226bd29241e849");
 xhrC.send();
 
-function dataError(){
+function dataError() {
     console.log("ERROR LOADING DATA");
     console.log("ABORTING...");
-    console.log("ABORTED"); 
+    console.log("ABORTED");
 }
 
 let dataDict = {};
 
-function dataLoaded(e){
+function dataLoaded(e) {
     let label = e.target.responseURL.split("/")[6];
     let JSONObj = JSON.parse(e.target.responseText);
     let array = JSONObj.data;
-   
-    for(let i = 0; i<array.length; i++){
+    for (let i = 0; i < array.length; i++) {
         let imageUrl = array[i].link;
         let image = new Image();
         image.crossOrigin = "Anonymous";
@@ -52,11 +55,14 @@ function dataLoaded(e){
         image.onload = getDataImages;
         image.class = label;
     }
-    
-    
 }
 
-function getDataImages(e){
+
+
+function getDataImages(e) {
+
+    //app.isLoading = false;
+    app.loadingMessage = "Loading images please wait...";
     let canvas = document.createElement("canvas");
     let image = e.path[0];
     canvas.width = 64;
@@ -81,39 +87,35 @@ async function createModel(){
 	model.add(tf.layers.dense({units:64, activation:'relu'}));
     model.add(tf.layers.dense({units:1,  activation:'sigmoid'}));
     model.compile({loss: 'meanSquaredError', optimizer: 'adam', metrics: ['accuracy']});
-    
+    app.loadingMessage = "Training please wait...";
 	await createVisual();
 	
     let inputs = getInput(250);
     
    	await train(model, inputs);
+
+
 }
 
 //returns a 2d tensor of image data
-function getInput(amountToGrab){
+function getInput(amountToGrab) {
     let inputArray = [];
     let labelArray = [];
-    let typesCount  = Object.keys(dataDict).length;
-    for(let i = 0; i<amountToGrab; i++){
-        let index = Math.floor(typesCount*Math.random());
+    let typesCount = Object.keys(dataDict).length;
+    for (let i = 0; i < amountToGrab; i++) {
+        let index = Math.floor(typesCount * Math.random());
         let type = Object.keys(dataDict)[index];
         labelArray.push(index);
         let fullArray = dataDict[type];
-        index = Math.floor(Math.random()*fullArray.length);
-        
+        index = Math.floor(Math.random() * fullArray.length);
+
         let data = fullArray[index];
         for(let j = 0; j<data.data.length/4; j++){
             inputArray.push(data.data[j]/255);
         	inputArray.push(data.data[j+1]/255);
 			inputArray.push(data.data[j+2]/255);
 		}
-        
-        
-        //Image processing goes here
-       // dataInput = tf.image.resize(dataInput)
-        
-        
-    }
+	}
     let inputTensor = tf.tensor4d(inputArray,[amountToGrab,64,64,3]);
     let labelTensor = tf.tensor2d(labelArray,[amountToGrab,1]);
     return [inputTensor,labelTensor];
@@ -152,9 +154,9 @@ function predictTest(){
         let val = values[0];
         let predictType = Object.keys(dataDict)[Math.floor(val*typesCount)];
         console.log(predictType);
-        app.guess = "Guess: "+predictType;
+		app.guess = `This is a ${predictType}. I'm ${values[0]}% sure. `;
+		app.loadingMessage = "";
        	return predictType;
-       
 }
 
 async function train(model, inputs){
