@@ -49,41 +49,44 @@ function dataLoaded(e){
         let image = new Image();
         image.crossOrigin = "Anonymous";
         image.src = imageUrl;
-        image.onload = getData;
+        image.onload = getDataImages;
         image.class = label;
     }
     
     
 }
 
-function getData(e){
+function getDataImages(e){
     let canvas = document.createElement("canvas");
     let image = e.path[0];
-    canvas.width = 128;
-    canvas.height = 128;
+    canvas.width = 64;
+    canvas.height = 64;
     let ctx = canvas.getContext("2d");
-    ctx.drawImage(image,0,0,128,128);
-    let data = ctx.getImageData(0,0,128,128);
+    ctx.drawImage(image,0,0,64,64);
+    let data = ctx.getImageData(0,0,64,64);
     if(dataDict[image.class] == undefined){
         dataDict[image.class] = [];
     }
     dataDict[image.class].push(data);
-    console.log(dataDict);
 }
 
 let model;
-function createModel(){
+async function createModel(){
     model = tf.sequential();
-    model.add(tf.layers.dense({units: 1, inputShape: [65536]}));
+    model.add(tf.layers.conv2d({filters:8, kernelSize:5,padding:'same',activation:'relu',inputShape:[64,64,3]}));
+	model.add(tf.layers.maxPooling2d({poolSize:2}));
+	model.add(tf.layers.conv2d({filters:16, kernelSize:3,padding:'same',activation:'relu'}));
+	model.add(tf.layers.maxPooling2d({poolSize:2}));
+	model.add(tf.layers.flatten());
+	model.add(tf.layers.dense({units:64, activation:'relu'}));
+    model.add(tf.layers.dense({units:1,  activation:'sigmoid'}));
+    model.compile({loss: 'meanSquaredError', optimizer: 'adam', metrics: ['accuracy']});
     
-    model.compile({loss: 'meanSquaredError', optimizer: 'adam'});
-    
+	await createVisual();
+	
     let inputs = getInput(250);
     
-    model.fit(inputs[0],inputs[1],{epochs:10}).then(()=>
-    {
-        predictTest();
-    });
+   	await train(model, inputs);
 }
 
 //returns a 2d tensor of image data
@@ -99,9 +102,11 @@ function getInput(amountToGrab){
         index = Math.floor(Math.random()*fullArray.length);
         
         let data = fullArray[index];
-        for(let j = 0; j<data.data.length; j++){
+        for(let j = 0; j<data.data.length/4; j++){
             inputArray.push(data.data[j]/255);
-        }
+        	inputArray.push(data.data[j+1]/255);
+			inputArray.push(data.data[j+2]/255);
+		}
         
         
         //Image processing goes here
@@ -109,13 +114,9 @@ function getInput(amountToGrab){
         
         
     }
-    let inputTensor = tf.tensor2d(inputArray,[amountToGrab,65536]);
+    let inputTensor = tf.tensor4d(inputArray,[amountToGrab,64,64,3]);
     let labelTensor = tf.tensor2d(labelArray,[amountToGrab,1]);
     return [inputTensor,labelTensor];
-}
-
-function predict(imageData){
-    model.predict(tf.tensor2d(imageData,[65536,1])).print();
 }
 
 function predictTest(){
@@ -127,15 +128,16 @@ function predictTest(){
         index = Math.floor(Math.random()*fullArray.length);
         
         let data = fullArray[index];
-        let dataInput = new Float32Array(65536);
     
         imagedata_to_image(data);
     
-        for(let j = 0; j<data.data.length; j++){
+        for(let j = 0; j<data.data.length/4; j++){
             inputArray.push(data.data[j]/255);
-        }
+        	inputArray.push(data.data[j+1]/255);
+			inputArray.push(data.data[j+2]/255);
+		}
         
-        let inputTensor = tf.tensor2d(inputArray,[1,65536]);
+        let inputTensor = tf.tensor4d(inputArray,[1,64,64,3]);
     
         let prediction = model.predict(inputTensor).asScalar();
         
@@ -150,9 +152,28 @@ function predictTest(){
         let val = values[0];
         let predictType = Object.keys(dataDict)[Math.floor(val*typesCount)];
         console.log(predictType);
-        app.guess = predictType;
-       return predictType;
+        app.guess = "Guess: "+predictType;
+       	return predictType;
        
+}
+
+async function train(model, inputs){
+	const metrics = ['loss', 'val_loss', 'acc', 'val_acc'];
+	const container = {
+		name: 'Model Training', styles: { height: '1000px' }
+	};
+	const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
+
+	let trainXs = inputs[0];
+	let trainYs = inputs[1];
+	let testXs = inputs[0];
+	let testYs = inputs[1];
+	
+	return model.fit(trainXs, trainYs, {
+		epochs: 1,
+		callbacks: fitCallbacks,
+		yeildEvery: 'batch'
+	});
 }
 
 function imagedata_to_image(imagedata) {
@@ -162,4 +183,10 @@ function imagedata_to_image(imagedata) {
     canvas.height = imagedata.height;
     ctx.putImageData(imagedata, 0, 0);
     app.image = canvas.toDataURL();
+}
+
+async function createVisual(){
+	let visor = tfvis.visor();
+	let modelDisplay = visor.surface({name:"Model Summary", tab:"Model Info"});
+	tfvis.show.modelSummary(modelDisplay,model);
 }

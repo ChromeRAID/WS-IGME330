@@ -80,15 +80,17 @@
 					<span>Selected: {{ selected }}<br></span>
 					<button class="btn waves-effect waves-light" type="submit" @click='search'>Search</button>
 					<button class="btn waves-effect waves-light" type="submit" @click='run'>Run</button>
+					<button class="btn waves-effect waves-light" type="submit" @click='predictImage'>Predict</button>
 					<p id="output"></p>
 
 				</div>
 			</div>
             </div>
 		</div>
-		<canvas id="mainCanvas" width=128 height=128>
+		<canvas id="mainCanvas" width=128 height=128 style="display:none">
 
 		</canvas>
+		<script  src="src/test.js"></script>
 		<!-- #1 - link to Firebase goes here  -->
 		<script
 			src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
@@ -164,12 +166,14 @@
 
 							})
 					}, // end search
-					run() {
+					async run() {
 						let img = document.querySelector("#img").src;
 						//let canvas = document.querySelector("#mainCanvas");
 						//let ctx = canvas.getContext("2d");
 						//ctx.drawImage(img,0,0,128,128);
 						//console.log(ctx.getImageData(0,0,128,128));
+						app.guess = "RUNNING MODEL TRAINING PLEASE WAIT";
+						
 						let imageURL = "https://images.dog.ceo/breeds/hound-blood/n02088466_7731.jpg";
 
 						downloadedImg = new Image;
@@ -177,9 +181,13 @@
 						downloadedImg.addEventListener("load", imageReceived, false);
 						downloadedImg.src = imageURL;
                         
-                        app.guess = "RUNNING MODEL TRAINING PLEASE WAIT";
-                        
-                        createModel();
+
+                        setTimeout( async function(){
+							await createModel();
+						},1000);
+					},
+					predictImage(){
+						predictTest();
 					}
 				}
 			});
@@ -229,7 +237,7 @@
 			src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
 		<script
 			src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.0.2/dist/tfjs-vis.umd.min.js"></script>
-		<script  src="src/test.js"></script>
+		
 
 
 
