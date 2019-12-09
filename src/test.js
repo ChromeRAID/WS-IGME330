@@ -8,32 +8,25 @@ let status = {
     isFinished: 1,
     message: ""
 };
-//let url = "https://images.dog.ceo/breeds/hound-english/n02089973_48.jpg";
-//Create a new XHR object
-let xhr = new XMLHttpRequest();
-//Set onload Handler
-xhr.onload = dataLoaded;
-
-//Set the onerror handler
-xhr.onerror = dataError;
-
-//Open connection and set the request
-xhr.open("GET", testURLDog);
-xhr.setRequestHeader("Authorization", "Client-ID 1226bd29241e849");
-xhr.send();
 
 
-let xhrC = new XMLHttpRequest();
-//Set onload Handler
-xhrC.onload = dataLoaded;
+XHRRequest(testURLDog,dataLoaded,dataError);
+XHRRequest(testURLDog,dataLoaded,dataError);
 
-//Set the onerror handler
-xhrC.onerror = dataError;
+function XHRRequest(url,load,error){
+    let xhrC = new XMLHttpRequest();
+    //Set onload Handler
+    xhrC.onload = load;
 
-//Open connection and set the request
-xhrC.open("GET", testURLCats);
-xhrC.setRequestHeader("Authorization", "Client-ID 1226bd29241e849");
-xhrC.send();
+    //Set the onerror handler
+    xhrC.onerror = error;
+
+    //Open connection and set the request
+    xhrC.open("GET", url);
+    xhrC.setRequestHeader("Authorization", "Client-ID 1226bd29241e849");
+    xhrC.send();
+
+}
 
 function dataError() {
     console.log("ERROR LOADING DATA");
@@ -57,8 +50,6 @@ function dataLoaded(e) {
     }
 }
 
-
-
 function getDataImages(e) {
 
     //app.isLoading = false;
@@ -78,14 +69,14 @@ function getDataImages(e) {
 
 let model;
 async function createModel(){
-    model = tf.sequential();
-    model.add(tf.layers.conv2d({filters:8, kernelSize:5,padding:'same',activation:'relu',inputShape:[64,64,3]}));
-	model.add(tf.layers.maxPooling2d({poolSize:2}));
-	model.add(tf.layers.conv2d({filters:16, kernelSize:3,padding:'same',activation:'relu'}));
-	model.add(tf.layers.maxPooling2d({poolSize:2}));
-	model.add(tf.layers.flatten());
-	model.add(tf.layers.dense({units:64, activation:'relu'}));
-    model.add(tf.layers.dense({units:1,  activation:'sigmoid'}));
+    let layers = [];
+    layers.push(tf.layers.conv2d({filters:8, kernelSize:5,padding:'same',activation:'relu',inputShape:[64,64,3]}));
+	layers.push(tf.layers.maxPooling2d({poolSize:2}));
+	layers.push(tf.layers.conv2d({filters:16, kernelSize:3,padding:'same',activation:'relu'}));
+	layers.push(tf.layers.maxPooling2d({poolSize:2}));
+	layers.push(tf.layers.flatten());
+	layers.push(tf.layers.dense({units:64, activation:'relu'}));
+    layers.push(tf.layers.dense({units:1,  activation:'sigmoid'}));
     model.compile({loss: 'meanSquaredError', optimizer: 'adam', metrics: ['accuracy']});
     app.loadingMessage = "Training please wait...";
 	await createVisual();
@@ -192,3 +183,42 @@ async function createVisual(){
 	let modelDisplay = visor.surface({name:"Model Summary", tab:"Model Info"});
 	tfvis.show.modelSummary(modelDisplay,model);
 }
+
+
+let activeModel;
+
+function SaveModel(){
+    //Save stuff to firebase
+}
+
+function LoadModel(){
+    //Get stuff from firebase   
+}
+
+function initModel(){
+    activeModel = new ModelClass(app.settings);
+}
+
+function CreateModel(){
+    let layers = [];
+    layers.push(tf.layers.conv2d({filters:8, kernelSize:5,padding:'same',activation:'relu',inputShape:[64,64,3]}));
+	layers.push(tf.layers.maxPooling2d({poolSize:2}));
+	layers.push(tf.layers.conv2d({filters:16, kernelSize:3,padding:'same',activation:'relu'}));
+	layers.push(tf.layers.maxPooling2d({poolSize:2}));
+	layers.push(tf.layers.flatten());
+	layers.push(tf.layers.dense({units:64, activation:'relu'}));
+    layers.push(tf.layers.dense({units:1,  activation:'sigmoid'}));
+    let loss = "meanSquaredError";
+    let optimizer = "adam";
+    let metrics = ["accuracy"];
+    activeModel.BuildModel(layers,loss,optimizer,metrics);
+}
+
+function TrainModel(){
+    app.loadingMessage = "Training Please Wait...";
+    await createVisual();
+    let inputs  = getInput(250);
+    await 
+}
+
+import {ModelClass} from "./Classes/Model.js"

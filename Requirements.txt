@@ -1,0 +1,28 @@
+A. Functionality	40	
+    1. TWO web services are used    (TF/Imgur)		
+    2. Cloud storage is used		(Firebase)
+    3. Last term searched stored in browser		(Saves last used image/model)
+    4. Has required Controls	(File Upload/Epoch Dropdown/Checkbox Subreddits)
+    5. Runs without errors		
+B. Design & Interaction	20	
+    1. Visual design is pleasing		
+    2. Widgets are well labeled and follow interface conventions		
+    3. Users should be able to figure out how to use the app with minimal instruction		
+    4. User errors must be handled gracefully		
+    5. The state the application is in is obvious		
+    6. The app should look good on a range of displays.		
+C. HTML/CSS/Media	10	
+    1. Valid HTML		
+    2. Valid CSS		
+    3. Images properly optimized		
+D. Code	10	
+    1. MVVM Framework used	(VUE)
+    2. Ajax used	(XHR/FETCH)
+    3. ES6 Custom Class used (Model)
+E. Impact	10	
+    - Does the app work as intended and do something useful?		
+    - Does the app functionality and programming go beyond what we did in class?		
+    - Is this project "portfolio quality" that you would not hesitate to show a potential employer?		
+Above and Beyond (see below)	10	
+Possible Total Points	100	
+
