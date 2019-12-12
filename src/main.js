@@ -1,21 +1,18 @@
-let url = "https://api.imgur.com/3/gallery/r/";
+let urls = "https://api.imgur.com/3/gallery/r/";
 let status = {
     isFinished: 1,
     message: ""
 };
 let dataDict = {};
 let activeModel;
-
-
-
-XHRRequest(url+"dogs",dataLoaded,dataError);
-
+//Loads Images for all subreddits in vue instance
 function loadImages(){
 	for(let i = 0; i<app.subreddits.length; i++){
-		XHRRequest(app.subreddits[i],dataLoaded,dataError);
+		console.log(urls+app.subreddits[i]);
+		XHRRequest(urls+app.subreddits[i],dataLoaded,dataError);
 	}
 }
-
+//Handles XHR Request for images
 function XHRRequest(url,load,error){
     let xhrC = new XMLHttpRequest();
     //Set onload Handler
@@ -30,14 +27,15 @@ function XHRRequest(url,load,error){
     xhrC.send();
 
 }
-
+//If there is an error this is called
 function dataError(e) {
     console.log("ERROR LOADING DATA");
     console.log("ABORTING...");
     console.log("ABORTED");
 }
-
+//If the data is loaded successfully
 function dataLoaded(e) {
+	//If this is called and the call is not successful remove this subreddit from app
 	if(e.target.status != "200"){
 		let tag = e.target.responseURL.split("/")[6];
 		app.subreddits = app.subreddits.filter(function(value,index, arr){
@@ -47,6 +45,15 @@ function dataLoaded(e) {
 	}
     let label = e.target.responseURL.split("/")[6];
     let JSONObj = JSON.parse(e.target.responseText);
+	//If successful but there is no data remove this from the app
+	if(JSONObj.data.length == 0){
+		let tag = e.target.responseURL.split("/")[6];
+		app.subreddits = app.subreddits.filter(function(value,index, arr){
+			return value!=tag;
+		});
+		return;
+	}
+	//If valid 
     let array = JSONObj.data;
     for (let i = 0; i < array.length; i++) {
         let imageUrl = array[i].link;
@@ -57,7 +64,7 @@ function dataLoaded(e) {
         image.class = label;
     }
 }
-
+//Converts image to imageData
 function getDataImages(e) {
 
     //app.isLoading = false;
@@ -74,27 +81,6 @@ function getDataImages(e) {
     }
     dataDict[image.class].push(data);
 }
-
-async function createModel(){
-    let layers = [];
-    layers.push(tf.layers.conv2d({filters:8, kernelSize:5,padding:'same',activation:'relu',inputShape:[64,64,3]}));
-	layers.push(tf.layers.maxPooling2d({poolSize:2}));
-	layers.push(tf.layers.conv2d({filters:16, kernelSize:3,padding:'same',activation:'relu'}));
-	layers.push(tf.layers.maxPooling2d({poolSize:2}));
-	layers.push(tf.layers.flatten());
-	layers.push(tf.layers.dense({units:64, activation:'relu'}));
-    layers.push(tf.layers.dense({units:1,  activation:'sigmoid'}));
-    model.compile({loss: 'meanSquaredError', optimizer: 'adam', metrics: ['accuracy']});
-    app.loadingMessage = "Training please wait...";
-	await createVisual();
-	
-    let inputs = getInput(250);
-    
-   	await train(model, inputs);
-
-
-}
-
 //returns a 2d tensor of image data
 function getInput(amountToGrab) {
     let inputArray = [];
@@ -118,7 +104,7 @@ function getInput(amountToGrab) {
     let labelTensor = tf.tensor2d(labelArray,[amountToGrab,1]);
     return [inputTensor,labelTensor];
 }
-
+//Converts image data to image useful for prediction visuals
 function imagedata_to_image(imagedata) {
     var canvas = document.querySelector('#mainCanvas');
     var ctx = canvas.getContext('2d');
@@ -127,25 +113,25 @@ function imagedata_to_image(imagedata) {
     ctx.putImageData(imagedata, 0, 0);
     app.image = canvas.toDataURL();
 }
-
+//Creates a visual of a model
 async function createVisual(){
 	let visor = tfvis.visor();
 	let modelDisplay = visor.surface({name:"Model Summary", tab:"Model Info"});
 	tfvis.show.modelSummary(modelDisplay,model);
 }
-
+//Saves a model to firebase
 function SaveModel(){
     //Save stuff to firebase
 }
-
+//Loads a model from firebase
 function LoadModel(){
     //Get stuff from firebase   
 }
-
+//Creates a new model object
 function initModel(){
     activeModel = new ModelClass(app.settings);
 }
-
+//Creates a model based on settings
 function CreateModel(){
     let layers = [];
     layers.push(tf.layers.conv2d({filters:8, kernelSize:5,padding:'same',activation:'relu',inputShape:[64,64,3]}));
@@ -160,13 +146,13 @@ function CreateModel(){
     let metrics = ["accuracy"];
     activeModel.BuildModel(layers,loss,optimizer,metrics);
 }
-
+//Trains the model
 async function TrainModel(){
     app.loadingMessage = "Training Please Wait...";
     await createVisual();
     let inputs  = getInput(250);
 }
-
+//Tests the model off of a random image
 function predictTest(){
     let inputArray = [];
         let typesCount  = Object.keys(dataDict).length;
@@ -204,3 +190,6 @@ function predictTest(){
 		app.loadingMessage = "";
        	return predictType;
 }
+
+import {ModelClass} from "./Classes/Model.js";
+export {loadImages,SaveModel,LoadModel,CreateModel,TrainModel,predictTest};
