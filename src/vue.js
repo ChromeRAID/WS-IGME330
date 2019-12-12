@@ -37,9 +37,8 @@ const app = new Vue({
 		epochLimits: [5,10,15,20,25],
 		dataLimits: [100,200,250,300,350],
 		epochSelected: 15,
-		dataSelected: 250
-
-
+		dataSelected: 250,
+		userID: 0
 	},
 	methods: {
 		LoadStuff(){
@@ -60,7 +59,8 @@ const app = new Vue({
 			}
 		},
         onFileChange(e) {
-            app.upload = e.target.files[0];
+			app.upload = e.target.files[0];
+			this.SetSavedImage();
             console.log(app.upload);
             //predictTest();
 		},
@@ -70,10 +70,33 @@ const app = new Vue({
 					app.subreddits.splice(val, 1);
 				}
 			}
+		},
+		GetUserID(){
+			if(localStorage.getItem("sru4607-proj2") != undefined){
+				this.userID = localStorage.getItem("sru4607-proj2");
+			}
+			else{
+				this.userID = Math.floor(Math.random()*1000000000000);
+				localStorage.setItem("sru4607-proj2",this.userID);
+			}
+		},
+		GetSavedImage(){
+			if(localStorage.getItem("sru4607-proj2-image") != undefined){
+				this.upload = localStorage.getItem("sru4607-proj2-image");
+			}
+			else{
+				this.upload = this.image;
+				localStorage.setItem("sru4607-proj2-image",this.upload);
+			}
+		},
+		SetSavedImage(){
+			localStorage.setItem("sru4607-proj2-image",this.upload);
 		}
 	},
 	created(){
 		this.LoadStuff();
+		this.GetUserID();
+		this.GetSavedImage();
 	}
 });
 
