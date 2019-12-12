@@ -18,91 +18,114 @@
 
 
 	<body>
-
-		<div class="row">
-
-			<div class="col s5">
-				<h2>Train Model</h2>
-				<form action="#">
-					<p>
-						<label>
-							<input type="checkbox" class="filled-in"
-								checked="checked" />
-
-							<span>Option1</span>
-						</label>
-					</p>
-					<p>
-						<label>
-							<input type="checkbox" class="filled-in"
-								checked="checked" />
-
-							<span>Option2</span>
-						</label>
-					</p>
-					<p>
-						<label>
-							<input type="checkbox" class="filled-in"
-								checked="checked" />
-
-							<span>Option 3</span>
-						</label>
-					</p>
-					<p>
-						<label>
-							<input type="checkbox" class="filled-in"
-								checked="checked" />
-							<span>Option 4</span>
-						</label>
-					</p>
-				</form>
-				<button class="btn waves-effect waves-light" type="submit"
-					name="action">Submit
-					<i class="material-icons right">send</i>
-				</button>
+		<div class='container'>
+			<div class='row'>
+				<div class='col s12'>
+					<h1 class='center-align card-panel teal lighten-2'>Cats or
+						Dogs Identifier</h1>
+				</div>
 			</div>
+			<div class='row card-panel teal'>
 
-			<div class="col s5">
-				<div id='root'>
-					<h1>{{guess}}</h1>
-					<div id="console">
-						<img class="responsive-img" id="img" v-bind:src="image"
-							crossorgin="Anonymous" width="500" height="500" />
-					</div>
-					<div class="input-field col s12">
-						<p id="output"></p>
-						<p><input class="btn waves-effect waves-light"
-								id="input" type="file"
-								accept='image/jpeg, image/png' size="50"
-								maxlength="50" autofocus
-								value="Upload image here" /></p>
-						<select class="browser-default"
-							onchange="selectChange(this)"
-							v-model:value="selected">
-							<option v-for="item in options"
-								v-bind:value="item.value">{{item.text}}</option>
-						</select>
-						<span>Selected: {{ selected }}<br></span>
-						<button class="btn waves-effect waves-light"
-							type="submit" @click='search'>Search</button>
-						<button class="btn waves-effect waves-light"
-							type="submit" @click='run'>Run</button>
-						<button class="btn waves-effect waves-light"
-							type="submit" @click='predictImage'>Predict</button>
-						<!--<p v-bind:disabled="isLoading == false">
-							<div class="progress">
-								<div class="indeterminate"></div>
+				<div class="col s5">
+					<h3>Train Model</h3>
+					<form action="#">
+						<p>
+							<label>
+								<input type="checkbox" class="filled-in"
+									checked="checked" />
+
+								<span>Option1</span>
+							</label>
+						</p>
+						<p>
+							<label>
+								<input type="checkbox" class="filled-in"
+									checked="checked" />
+
+								<span>Option2</span>
+							</label>
+						</p>
+						<p>
+							<label>
+								<input type="checkbox" class="filled-in"
+									checked="checked" />
+
+								<span>Option 3</span>
+							</label>
+						</p>
+						<p>
+							<label>
+								<input type="checkbox" class="filled-in"
+									checked="checked" />
+								<span>Option 4</span>
+							</label>
+						</p>
+					</form>
+					<button class="btn waves-effect waves-light" type="submit"
+						name="action">Submit
+						<i class="material-icons right">send</i>
+					</button>
+					<button class="btn waves-effect waves-light" type="submit"
+						@click=''>Load</button>
+				</div>
+				<div class="col s5">
+					<div id='root'>
+						<h3 class='left-align'>{{guess}}</h3>
+						<div class='col s6'>
+							<div id="console">
+								<img class="responsive-img" id="img"
+									v-bind:src="image" crossorgin="Anonymous"
+									width="500" height="500" />
 							</div>
-						</p>-->
-						<p id="output">{{loadingMessage}}</p>
-					</div>
+						</div>
+						<div class='col s6'>
+							<div class="input-field left">
+								<p id="output"></p>
+								<p><input @change='onFileChange'
+										class="btn waves-effect waves-light"
+										id="input" type="file"
+										accept='image/jpeg, image/png' size="50"
+										maxlength="50" autofocus
+										value="Upload image here" /></p>
+								<!--<select class="browser-default"
+												onchange="selectChange(this)"
+												v-model:value="selected">
+												<option v-for="item in options"
+													v-bind:value="item.value">{{item.text}}</option>
+											</select>-->
+								<select class="browser-default"
+									@change='selectChange(this)'
+									v-model:value="selected">
+									<option v-for="item in options"
+										v-bind:value="item.value">{{item.text}}
+									</option>
+								</select>
+								<span>Selected: {{ selected }}<br></span>
+								<button class="btn waves-effect waves-light"
+									type="submit"
+									@click='search'>Search</button>
+								<button class="btn waves-effect waves-light"
+									type="submit" @click='run'>Run</button>
+								<button class="btn waves-effect waves-light"
+									type="submit"
+									@click='predictImage'>Predict</button>
+								<p>
+									<div class="progress" :style="{'visibility': appState.hiddenVal}">
+										<div class="indeterminate"></div>
+									</div>
+								</p>
+								<p id="output">{{upload}}</p>
+
+							</div>
+						</div>
 				</div>
 			</div>
 		</div>
 		<canvas id="mainCanvas" width=128 height=128 style="display:none">
 
 		</canvas>
-		<script  src="src/test.js"></script>
+		<script src="src/test.js"></script>
 		<!-- #1 - link to Firebase goes here  -->
 		<script
 			src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
@@ -153,9 +176,9 @@
 					],
 					url: URL,
 					guess: "WAITING FOR TRAINING",
-					isLoading: false,
-					loadingMessage: "",
-					image: "https://i.imgur.com/JlUvsxa.jpg"
+					appState: { hiddenVal: 'show', loadingMessage: "" },
+					image: "https://i.imgur.com/JlUvsxa.jpg",
+					upload: ''
 
 				},
 				created() {
@@ -176,8 +199,6 @@
 								let arrayImages = json.message;
 								this.image = arrayImages[Math.floor(arrayImages.length * Math.random())]
 
-
-
 							})
 					}, // end search
 					async run() {
@@ -187,21 +208,26 @@
 						//ctx.drawImage(img,0,0,128,128);
 						//console.log(ctx.getImageData(0,0,128,128));
 						app.guess = "RUNNING MODEL TRAINING PLEASE WAIT";
-						
+
 						let imageURL = "https://images.dog.ceo/breeds/hound-blood/n02088466_7731.jpg";
 
 						downloadedImg = new Image;
 						downloadedImg.crossOrigin = "Anonymous";
 						downloadedImg.addEventListener("load", imageReceived, false);
 						downloadedImg.src = imageURL;
-                        
 
-                        setTimeout( async function(){
+
+						setTimeout(async function () {
 							await createModel();
-						},1000);
+						}, 1000);
 					},
-					predictImage(){
+					predictImage() {
 						predictTest();
+					},
+					onFileChange(e) {
+						app.upload = e.target.files[0];
+						console.log(app.upload);
+						//predictTest();
 					}
 				}
 			});
@@ -249,7 +275,8 @@
 		<!--Tensorflow-->
 		<script
 			src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.0.2/dist/tfjs-vis.umd.min.js"></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.0.2/dist/tfjs-vis.umd.min.js"></script>
 
 
 
