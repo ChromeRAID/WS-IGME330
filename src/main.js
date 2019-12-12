@@ -214,7 +214,7 @@ function predictTest(){
         let accuracy = prediction[maxIndex];
 		app.guess = `This is a ${predictType}. I'm ${accuracy}% sure. `;
 		app.loadingMessage = "";
-       	return predictType;*/
+       	return predictType;
 }
 //Tests the model off of an uploaded image
 function predictUpload(){
