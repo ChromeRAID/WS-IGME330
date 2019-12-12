@@ -2,7 +2,7 @@ A. Functionality	40
     1. TWO web services are used    (TF/Imgur)		
     2. Cloud storage is used		(Firebase)
     3. Last term searched stored in browser		(Saves last used image/model)
-    4. Has required Controls	(File Upload/Epoch Dropdown/Checkbox Subreddits)
+    4. Has required Controls	(File Upload/Epoch Dropdown/Checkbox Subreddits) (File Upload, Dropdown, )
     5. Runs without errors		
 B. Design & Interaction	20	
     1. Visual design is pleasing		
