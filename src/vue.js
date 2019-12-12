@@ -23,7 +23,7 @@ const app = new Vue({
 	data: {
 		result: [],
 		selected: 'hound',
-		subreddits: [],
+		subreddits: ["dogs","cats"],
 		url: URL,
 		guess: "WAITING FOR TRAINING",
 		appState: {hiddenVal: 'show', loadingMessage: "" },
@@ -42,8 +42,7 @@ const app = new Vue({
 		},
 		async run() {
             if(this.subreddits.length == 0) {return;}
-            CreateModel();
-			TrainModel();
+            initModel();
 		},
 		predictImage(){
 			predictTest();
@@ -64,5 +63,5 @@ const app = new Vue({
 	}
 });
 
-import {LoadModel,predictTest,predictUpload,TrainModel,CreateModel} from "./main.js"
+import {initModel,LoadModel,predictTest,predictUpload,TrainModel,CreateModel} from "./main.js"
 export {app}

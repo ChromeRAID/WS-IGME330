@@ -15,6 +15,7 @@ class ModelClass{
         this.inputData = _Inputs;
         this.labelData = _Labels;
         this.model = tf.sequential();
+        this.classNames = [];
     }
     
     LoadSettings(){

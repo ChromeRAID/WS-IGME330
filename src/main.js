@@ -5,68 +5,65 @@ let status = {
 };
 let dataDict = {};
 let activeModel;
+let imagesToLoad = 0;
 //Loads Images for all subreddits in vue instance
 function loadImages(){
 	for(let i = 0; i<app.subreddits.length; i++){
-		console.log(urls+app.subreddits[i]);
+        imagesToLoad++;
 		XHRRequest(urls+app.subreddits[i],dataLoaded,dataError);
 	}
 }
 //Handles XHR Request for images
 function XHRRequest(url,load,error){
-    let xhrC = new XMLHttpRequest();
+    let xhrRequest = new XMLHttpRequest();
     //Set onload Handler
-    xhrC.onload = load;
-
+    xhrRequest.onload = load;
     //Set the onerror handler
-    xhrC.onerror = error;
-
+    xhrRequest.onerror = error;
     //Open connection and set the request
-    xhrC.open("GET", url);
-    xhrC.setRequestHeader("Authorization", "Client-ID 1226bd29241e849");
-    xhrC.send();
-
+    xhrRequest.open("GET", url);
+    xhrRequest.setRequestHeader("Authorization", "Client-ID 1226bd29241e849");
+    xhrRequest.send();
 }
 //If there is an error this is called
 function dataError(e) {
+    imagesToLoad--;
     console.log("ERROR LOADING DATA");
     console.log("ABORTING...");
     console.log("ABORTED");
 }
 //If the data is loaded successfully
 function dataLoaded(e) {
+    imagesToLoad--;
 	//If this is called and the call is not successful remove this subreddit from app
+    let label = e.target.responseURL.split("/")[6];
 	if(e.target.status != "200"){
-		let tag = e.target.responseURL.split("/")[6];
 		app.subreddits = app.subreddits.filter(function(value,index, arr){
-			return value!=tag;
+			return value!=label;
 		});
 		return;
 	}
-    let label = e.target.responseURL.split("/")[6];
     let JSONObj = JSON.parse(e.target.responseText);
 	//If successful but there is no data remove this from the app
 	if(JSONObj.data.length == 0){
-		let tag = e.target.responseURL.split("/")[6];
 		app.subreddits = app.subreddits.filter(function(value,index, arr){
-			return value!=tag;
+			return value!=label;
 		});
 		return;
 	}
 	//If valid 
     let array = JSONObj.data;
+    imagesToLoad+=array.length;
     for (let i = 0; i < array.length; i++) {
-        try{
         let imageUrl = array[i].link;
         let image = new Image();
         image.crossOrigin = "Anonymous";
         image.src = imageUrl;
         image.onload = getDataImages;
+        image.onerror = function(){
+            imagesToLoad--; 
+        };
         image.class = label;
-        }
-        catch(e){
-            console.log(e);
-        }
     }
 }
 //Converts image to imageData
@@ -85,6 +82,7 @@ function getDataImages(e) {
         dataDict[image.class] = [];
     }
     dataDict[image.class].push(data);
+    imagesToLoad--;
 }
 //returns a 2d tensor of image data
 function getInput(amountToGrab) {
@@ -136,13 +134,26 @@ function LoadModel(){
 }
 //Creates a new model object
 function initModel(){
+    imagesToLoad = 0;
+    dataDict = {};
     loadImages();
-    let input  = getInput(250);
-    activeModel = new ModelClass(15,input[0],input[1]);
+    checkIfFinished();
+    
+}
+function checkIfFinished(){
+    if(imagesToLoad!=0)
+    {
+        setTimeout(checkIfFinished,1000);
+    }
+    else
+    {
+        CreateModel();
+    }
 }
 //Creates a model based on settings
 function CreateModel(){
-    initModel();
+    let inputData = getInput(250);
+    activeModel = new ModelClass(15,inputData[0],inputData[1]);
     let layers = [];
     layers.push(tf.layers.conv2d({filters:8, kernelSize:5,padding:'same',activation:'relu',inputShape:[64,64,3]}));
 	layers.push(tf.layers.maxPooling2d({poolSize:2}));
@@ -150,11 +161,12 @@ function CreateModel(){
 	layers.push(tf.layers.maxPooling2d({poolSize:2}));
 	layers.push(tf.layers.flatten());
 	layers.push(tf.layers.dense({units:64, activation:'relu'}));
-    layers.push(tf.layers.dense({units:1,  activation:'sigmoid'}));
-    let loss = "meanSquaredError";
+    layers.push(tf.layers.dense({units:Object.keys(dataDict).length,  activation:'softmax'}));
+    let loss = "sparseCategoricalCrossentropy";
     let optimizer = "adam";
     let metrics = ["accuracy"];
     activeModel.BuildModel(layers,loss,optimizer,metrics);
+    TrainModel();
 }
 //Trains the model
 async function TrainModel(){
@@ -166,7 +178,6 @@ async function TrainModel(){
     
     app.loadingMessage = "Training Please Wait...";
     await createVisual();
-    let inputs  = getInput(250);
     await activeModel.TrainModel(fitCallbacks,"batch");
 }
 //Tests the model off of a random image
@@ -174,7 +185,8 @@ function predictTest(){
     let inputArray = [];
         let typesCount  = Object.keys(dataDict).length;
         let index = Math.floor(typesCount*Math.random());
-        let type = Object.keys(dataDict)[index];
+        let types = Object.keys(dataDict);
+        let type = types[index];
         let fullArray = dataDict[type];
         index = Math.floor(Math.random()*fullArray.length);
         
@@ -190,22 +202,19 @@ function predictTest(){
         
         let inputTensor = tf.tensor4d(inputArray,[1,64,64,3]);
     
-        let prediction = activeModel.model.predict(inputTensor).asScalar();
+        let prediction = activeModel.model.predict(inputTensor).dataSync();
         
-        
-        const a = prediction;
-        var array = [];
-        array.push(a);
-
-        let values = array.map(t => t.dataSync()[0])
-        console.log(values);
-    
-        let val = values[0];
-        let predictType = Object.keys(dataDict)[Math.floor(val*typesCount)];
-        console.log(predictType);
-		app.guess = `This is a ${predictType}. I'm ${values[0]}% sure. `;
+        let maxIndex = 0;
+        for(let k = 1; k<prediction.length; k++){
+            if(prediction[k] > prediction[maxIndex]){
+                maxIndex = k;
+            }
+        }
+        let predictType = types[maxIndex];
+        let accuracy = prediction[maxIndex];
+		app.guess = `This is a ${predictType}. I'm ${accuracy}% sure. `;
 		app.loadingMessage = "";
-       	return predictType;
+       	return predictType;*/
 }
 //Tests the model off of an uploaded image
 function predictUpload(){
@@ -249,4 +258,4 @@ function predictUpload(){
 
 import {app} from "./vue.js";
 import {ModelClass} from "./Classes/Model.js";
-export {loadImages,SaveModel,LoadModel,CreateModel,TrainModel,predictTest,predictUpload};
+export {initModel,loadImages,SaveModel,LoadModel,CreateModel,TrainModel,predictTest,predictUpload};
