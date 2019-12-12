@@ -1,4 +1,14 @@
-export class ModelClass{
+class ModelClass{
+	
+	//Settings
+		//Epochs
+		//Optimizer
+		//Loss
+		//Metrics
+		//Trained
+	//INput Data
+	//Labels
+	//Model
     constructor(_Epochs,_Inputs,_Labels){
         this.settings = {};
         this.settings.epochs = _Epochs;
@@ -7,23 +17,23 @@ export class ModelClass{
         this.model = tf.sequential();
     }
     
-    function LoadSettings(){
+    LoadSettings(){
         
     }
     
-    function GetSettings(){
+    GetSettings(){
         
     }
     
-    function BuildModel(layers,_loss,_optimizer,_metrics){
+    BuildModel(layers,_loss,_optimizer,_metrics){
         for(let i = 0; i<layers.length; i++){
             this.model.add(layers[i]);
         }
         this.model.compile({loss: _loss, optimizer: _optimizer, metrics: _metrics});
     }
     
-    function TrainModel(callbackMethod, yeild){
-        return model.fit(this.inputData, this.labelData, {
+    TrainModel(callbackMethod, yeild){
+        return this.model.fit(this.inputData, this.labelData, {
             epochs: this.settings.epochs,
             callbacks: callbackMethod,
             yeildEvery: yeild
@@ -36,3 +46,5 @@ export class ModelClass{
     
     
 }
+
+export {ModelClass};

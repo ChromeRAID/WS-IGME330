@@ -1,12 +1,13 @@
- // Your web app's Firebase configuration
+/* #2 - The rest of the Firebase setup code goes here */
+// Your web app's Firebase configuration
 var firebaseConfig = {
-    apiKey: "AIzaSyCac8tEBgqDcfDP-EJudTEc_rs6ZrxeTaY",
-    authDomain: "project-2-b33d8.firebaseapp.com",
-    databaseURL: "https://project-2-b33d8.firebaseio.com",
-    projectId: "project-2-b33d8",
-    storageBucket: "project-2-b33d8.appspot.com",
-    messagingSenderId: "862112219142",
-    appId: "1:862112219142:web:e764ca02cda76546e8c387"
+	apiKey: "AIzaSyAajUn4yXP77CnJZFKQckx9O1NqLr0ynAo",
+	authDomain: "fir-exer-f2cb4.firebaseapp.com",
+	databaseURL: "https://fir-exer-f2cb4.firebaseio.com",
+	projectId: "fir-exer-f2cb4",
+	storageBucket: "fir-exer-f2cb4.appspot.com",
+	messagingSenderId: "1084930185158",
+	appId: "1:1084930185158:web:5a83f966ca3cc2a7c444c7"
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);

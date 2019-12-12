@@ -1,177 +1,252 @@
-import {init} from './dogData.js';
+let urls = "https://api.imgur.com/3/gallery/r/";
+let status = {
+    isFinished: 1,
+    message: ""
+};
+let dataDict = {};
+let activeModel;
+//Loads Images for all subreddits in vue instance
+function loadImages(){
+	for(let i = 0; i<app.subreddits.length; i++){
+		console.log(urls+app.subreddits[i]);
+		XHRRequest(urls+app.subreddits[i],dataLoaded,dataError);
+	}
+}
+//Handles XHR Request for images
+function XHRRequest(url,load,error){
+    let xhrC = new XMLHttpRequest();
+    //Set onload Handler
+    xhrC.onload = load;
 
-//async function showExamples(data) {
-//    // Create a container in the visor
-//    const surface =
-//    tfvis.visor().surface({ name: 'Input Data Examples', tab: 'Input Data'});  
-//
-//    // Get the examples
-//    const examples = data.nextTestBatch(20);
-//    const numExamples = examples.xs.shape[0];
-//
-//    // Create a canvas element to render each example
-//    for (let i = 0; i < numExamples; i++) {
-//    const imageTensor = tf.tidy(() => {
-//        // Reshape the image to 64x64 px
-//        return examples.xs
-//        .slice([i, 0], [1, examples.xs.shape[1]])
-//        .reshape([28, 28, 1]);
-//        });
-//
-//        const canvas = document.createElement('canvas');
-//        canvas.width = 28;
-//        canvas.height = 28;
-//        canvas.style = 'margin: 4px;';
-//        await tf.browser.toPixels(imageTensor, canvas);
-//        surface.drawArea.appendChild(canvas);
-//
-//        imageTensor.dispose();
-//    }
-//}
-//
-//async function run() {  
-//	console.log("Running");
-//    const data = new MnistData();
-//    await data.load();
-//    await showExamples(data);
-//    const model = getModel();
-//    tfvis.show.modelSummary({name: 'Model Architecture'}, model);
-//
-//    await train(model, data);
-//}
-//
-//document.addEventListener('DOMContentLoaded', run);
-//
-//function getModel() {
-//  const model = tf.sequential();
-//  
-//  const IMAGE_WIDTH = 28;
-//  const IMAGE_HEIGHT = 28;
-//  const IMAGE_CHANNELS = 1;  
-//  
-//  // In the first layer of our convolutional neural network we have 
-//  // to specify the input shape. Then we specify some parameters for 
-//  // the convolution operation that takes place in this layer.
-//  model.add(tf.layers.conv2d({
-//    inputShape: [IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_CHANNELS],
-//    kernelSize: 5,
-//    filters: 8,
-//    strides: 1,
-//    activation: 'relu',
-//    kernelInitializer: 'varianceScaling'
-//  }));
-//
-//  // The MaxPooling layer acts as a sort of downsampling using max values
-//  // in a region instead of averaging.  
-//  model.add(tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}));
-//  
-//  // Repeat another conv2d + maxPooling stack. 
-//  // Note that we have more filters in the convolution.
-//  model.add(tf.layers.conv2d({
-//    kernelSize: 5,
-//    filters: 16,
-//    strides: 1,
-//    activation: 'relu',
-//    kernelInitializer: 'varianceScaling'
-//  }));
-//  model.add(tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}));
-//  
-//  // Now we flatten the output from the 2D filters into a 1D vector to prepare
-//  // it for input into our last layer. This is common practice when feeding
-//  // higher dimensional data to a final classification output layer.
-//  model.add(tf.layers.flatten());
-//
-//  // Our last layer is a dense layer which has 10 output units, one for each
-//  // output class (i.e. 0, 1, 2, 3, 4, 5, 6, 7, 8, 9).
-//  const NUM_OUTPUT_CLASSES = 10;
-//  model.add(tf.layers.dense({
-//    units: NUM_OUTPUT_CLASSES,
-//    kernelInitializer: 'varianceScaling',
-//    activation: 'softmax'
-//  }));
-//
-//  
-//  // Choose an optimizer, loss function and accuracy metric,
-//  // then compile and return the model
-//  const optimizer = tf.train.adam();
-//  model.compile({
-//    optimizer: optimizer,
-//    loss: 'categoricalCrossentropy',
-//    metrics: ['accuracy'],
-//  });
-//
-//  return model;
-//}
-//
-//async function train(model, data) {
-//  const metrics = ['loss', 'val_loss', 'acc', 'val_acc'];
-//  const container = {
-//    name: 'Model Training', styles: { height: '1000px' }
-//  };
-//  const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
-//  
-//  const BATCH_SIZE = 512;
-//  const TRAIN_DATA_SIZE = 5500;
-//  const TEST_DATA_SIZE = 1000;
-//
-//  const [trainXs, trainYs] = tf.tidy(() => {
-//    const d = data.nextTrainBatch(TRAIN_DATA_SIZE);
-//    return [
-//      d.xs.reshape([TRAIN_DATA_SIZE, 28, 28, 1]),
-//      d.labels
-//    ];
-//  });
-//
-//  const [testXs, testYs] = tf.tidy(() => {
-//    const d = data.nextTestBatch(TEST_DATA_SIZE);
-//    return [
-//      d.xs.reshape([TEST_DATA_SIZE, 28, 28, 1]),
-//      d.labels
-//    ];
-//  });
-//
-//  return model.fit(trainXs, trainYs, {
-//    batchSize: BATCH_SIZE,
-//    validationData: [testXs, testYs],
-//    epochs: 10,
-//    shuffle: true,
-//    callbacks: fitCallbacks
-//  });
-//}
-//
-//const classNames = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
-//
-//function doPrediction(model, data, testDataSize = 500) {
-//  const IMAGE_WIDTH = 28;
-//  const IMAGE_HEIGHT = 28;
-//  const testData = data.nextTestBatch(testDataSize);
-//  const testxs = testData.xs.reshape([testDataSize, IMAGE_WIDTH, IMAGE_HEIGHT, 1]);
-//  const labels = testData.labels.argMax([-1]);
-//  const preds = model.predict(testxs).argMax([-1]);
-//
-//  testxs.dispose();
-//  return [preds, labels];
-//}
-//
-//
-//async function showAccuracy(model, data) {
-//  const [preds, labels] = doPrediction(model, data);
-//  const classAccuracy = await tfvis.metrics.perClassAccuracy(labels, preds);
-//  const container = {name: 'Accuracy', tab: 'Evaluation'};
-//  tfvis.show.perClassAccuracy(container, classAccuracy, classNames);
-//
-//  labels.dispose();
-//}
-//
-//async function showConfusion(model, data) {
-//  const [preds, labels] = doPrediction(model, data);
-//  const confusionMatrix = await tfvis.metrics.confusionMatrix(labels, preds);
-//  const container = {name: 'Confusion Matrix', tab: 'Evaluation'};
-//  tfvis.render.confusionMatrix(
-//      container, {values: confusionMatrix}, classNames);
-//
-//  labels.dispose();
-//}
+    //Set the onerror handler
+    xhrC.onerror = error;
 
-init();
+    //Open connection and set the request
+    xhrC.open("GET", url);
+    xhrC.setRequestHeader("Authorization", "Client-ID 1226bd29241e849");
+    xhrC.send();
+
+}
+//If there is an error this is called
+function dataError(e) {
+    console.log("ERROR LOADING DATA");
+    console.log("ABORTING...");
+    console.log("ABORTED");
+}
+//If the data is loaded successfully
+function dataLoaded(e) {
+	//If this is called and the call is not successful remove this subreddit from app
+	if(e.target.status != "200"){
+		let tag = e.target.responseURL.split("/")[6];
+		app.subreddits = app.subreddits.filter(function(value,index, arr){
+			return value!=tag;
+		});
+		return;
+	}
+    let label = e.target.responseURL.split("/")[6];
+    let JSONObj = JSON.parse(e.target.responseText);
+	//If successful but there is no data remove this from the app
+	if(JSONObj.data.length == 0){
+		let tag = e.target.responseURL.split("/")[6];
+		app.subreddits = app.subreddits.filter(function(value,index, arr){
+			return value!=tag;
+		});
+		return;
+	}
+	//If valid 
+    let array = JSONObj.data;
+    for (let i = 0; i < array.length; i++) {
+        try{
+        let imageUrl = array[i].link;
+        let image = new Image();
+        image.crossOrigin = "Anonymous";
+        image.src = imageUrl;
+        image.onload = getDataImages;
+        image.class = label;
+        }
+        catch(e){
+            console.log(e);
+        }
+    }
+}
+//Converts image to imageData
+function getDataImages(e) {
+
+    //app.isLoading = false;
+    app.loadingMessage = "Loading images please wait...";
+    let canvas = document.createElement("canvas");
+    let image = e.path[0];
+    canvas.width = 64;
+    canvas.height = 64;
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage(image,0,0,64,64);
+    let data = ctx.getImageData(0,0,64,64);
+    if(dataDict[image.class] == undefined){
+        dataDict[image.class] = [];
+    }
+    dataDict[image.class].push(data);
+}
+//returns a 2d tensor of image data
+function getInput(amountToGrab) {
+    let inputArray = [];
+    let labelArray = [];
+    let typesCount = Object.keys(dataDict).length;
+    for (let i = 0; i < amountToGrab; i++) {
+        let index = Math.floor(typesCount * Math.random());
+        let type = Object.keys(dataDict)[index];
+        labelArray.push(index);
+        let fullArray = dataDict[type];
+        index = Math.floor(Math.random() * fullArray.length);
+
+        let data = fullArray[index];
+        for(let j = 0; j<data.data.length/4; j++){
+            inputArray.push(data.data[j]/255);
+        	inputArray.push(data.data[j+1]/255);
+			inputArray.push(data.data[j+2]/255);
+		}
+	}
+    let inputTensor = tf.tensor4d(inputArray,[amountToGrab,64,64,3]);
+    let labelTensor = tf.tensor2d(labelArray,[amountToGrab,1]);
+    return [inputTensor,labelTensor];
+}
+//Converts image data to image useful for prediction visuals
+function imagedata_to_image(imagedata) {
+    var canvas = document.querySelector('#mainCanvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = imagedata.width;
+    canvas.height = imagedata.height;
+    ctx.putImageData(imagedata, 0, 0);
+    app.image = canvas.toDataURL();
+}
+//Creates a visual of a model
+async function createVisual(){
+	let visor = tfvis.visor();
+	let modelDisplay = visor.surface({name:"Model Summary", tab:"Model Info"});
+	tfvis.show.modelSummary(modelDisplay,activeModel.model);
+}
+
+
+//Saves a model to firebase
+function SaveModel(){
+    //Save stuff to firebase
+}
+//Loads a model from firebase
+function LoadModel(){
+    //Get stuff from firebase   
+}
+//Creates a new model object
+function initModel(){
+    loadImages();
+    let input  = getInput(250);
+    activeModel = new ModelClass(15,input[0],input[1]);
+}
+//Creates a model based on settings
+function CreateModel(){
+    initModel();
+    let layers = [];
+    layers.push(tf.layers.conv2d({filters:8, kernelSize:5,padding:'same',activation:'relu',inputShape:[64,64,3]}));
+	layers.push(tf.layers.maxPooling2d({poolSize:2}));
+	layers.push(tf.layers.conv2d({filters:16, kernelSize:3,padding:'same',activation:'relu'}));
+	layers.push(tf.layers.maxPooling2d({poolSize:2}));
+	layers.push(tf.layers.flatten());
+	layers.push(tf.layers.dense({units:64, activation:'relu'}));
+    layers.push(tf.layers.dense({units:1,  activation:'sigmoid'}));
+    let loss = "meanSquaredError";
+    let optimizer = "adam";
+    let metrics = ["accuracy"];
+    activeModel.BuildModel(layers,loss,optimizer,metrics);
+}
+//Trains the model
+async function TrainModel(){
+    const metrics = ['loss', 'val_loss', 'acc', 'val_acc'];
+	const container = {
+		name: 'Model Training', styles: { height: '1000px' }
+	};
+    const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
     
+    app.loadingMessage = "Training Please Wait...";
+    await createVisual();
+    let inputs  = getInput(250);
+    await activeModel.TrainModel(fitCallbacks,"batch");
+}
+//Tests the model off of a random image
+function predictTest(){
+    let inputArray = [];
+        let typesCount  = Object.keys(dataDict).length;
+        let index = Math.floor(typesCount*Math.random());
+        let type = Object.keys(dataDict)[index];
+        let fullArray = dataDict[type];
+        index = Math.floor(Math.random()*fullArray.length);
+        
+        let data = fullArray[index];
+    
+        imagedata_to_image(data);
+    
+        for(let j = 0; j<data.data.length/4; j++){
+            inputArray.push(data.data[j]/255);
+        	inputArray.push(data.data[j+1]/255);
+			inputArray.push(data.data[j+2]/255);
+		}
+        
+        let inputTensor = tf.tensor4d(inputArray,[1,64,64,3]);
+    
+        let prediction = activeModel.model.predict(inputTensor).asScalar();
+        
+        
+        const a = prediction;
+        var array = [];
+        array.push(a);
+
+        let values = array.map(t => t.dataSync()[0])
+        console.log(values);
+    
+        let val = values[0];
+        let predictType = Object.keys(dataDict)[Math.floor(val*typesCount)];
+        console.log(predictType);
+		app.guess = `This is a ${predictType}. I'm ${values[0]}% sure. `;
+		app.loadingMessage = "";
+       	return predictType;
+}
+//Tests the model off of an uploaded image
+function predictUpload(){
+    let inputArray = [];
+        let typesCount  = Object.keys(dataDict).length;
+        let index = Math.floor(typesCount*Math.random());
+        let type = Object.keys(dataDict)[index];
+        let fullArray = dataDict[type];
+        index = Math.floor(Math.random()*fullArray.length);
+        
+        let data = fullArray[index];
+    
+        imagedata_to_image(data);
+    
+        for(let j = 0; j<data.data.length/4; j++){
+            inputArray.push(data.data[j]/255);
+        	inputArray.push(data.data[j+1]/255);
+			inputArray.push(data.data[j+2]/255);
+		}
+        
+        let inputTensor = tf.tensor4d(inputArray,[1,64,64,3]);
+    
+        let prediction = activeModel.predict(inputTensor).asScalar();
+        
+        
+        const a = prediction;
+        var array = [];
+        array.push(a);
+
+        let values = array.map(t => t.dataSync()[0])
+        console.log(values);
+    
+        let val = values[0];
+        let predictType = Object.keys(dataDict)[Math.floor(val*typesCount)];
+        console.log(predictType);
+		app.guess = `This is a ${predictType}. I'm ${values[0]}% sure. `;
+		app.loadingMessage = "";
+       	return predictType;
+}
+
+
+import {app} from "./vue.js";
+import {ModelClass} from "./Classes/Model.js";
+export {loadImages,SaveModel,LoadModel,CreateModel,TrainModel,predictTest,predictUpload};
