@@ -103,8 +103,8 @@ function getInput(amountToGrab) {
 			inputArray.push(data.data[j+2]/255);
 		}
 	}
-    let inputTensor = tf.tensor4d(inputArray,[amountToGrab,64,64,3]);
-    let labelTensor = tf.tensor2d(labelArray,[amountToGrab,1]);
+    let inputTensor = tf.tensor4d(inputArray,[parseInt(amountToGrab,10),64,64,3]);
+    let labelTensor = tf.tensor2d(labelArray,[parseInt(amountToGrab,10),1]);
     return [inputTensor,labelTensor];
 }
 //Converts image data to image useful for prediction visuals
@@ -256,7 +256,7 @@ function predictTest(){
         }
         let predictType = types[maxIndex];
         let accuracy = prediction[maxIndex];
-		app.guess = `This is a ${predictType}. I'm ${Math.round(accuracy,2)}% sure. `;
+		app.guess = `This is a ${predictType}. I'm ${Math.round(accuracy*100,4)}% sure. `;
         app.appState.loadingMessage = "";
         app.appState.isLoading = false;
        	return predictType;
@@ -288,7 +288,7 @@ function predictUpload(){
     }
     let predictType = types[maxIndex];
     let accuracy = prediction[maxIndex];
-    app.guess = `This is a ${predictType}. I'm ${Math.round(accuracy,2)}% sure. `;
+    app.guess = `This is a ${predictType}. I'm ${Math.round(accuracy*100,4)}% sure. `;
     app.appState.loadingMessage = "";
     app.appState.isLoading = false;
     return predictType;
