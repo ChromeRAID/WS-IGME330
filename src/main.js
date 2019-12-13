@@ -70,7 +70,8 @@ function dataLoaded(e) {
 function getDataImages(e) {
 
     //app.isLoading = false;
-    app.loadingMessage = "Loading images please wait...";
+    app.appState.loadingMessage = "Loading images please wait...";
+    app.appState.isLoading = true;
     let canvas = document.createElement("canvas");
     let image = e.path[0];
     canvas.width = 64;
@@ -109,15 +110,17 @@ function getInput(amountToGrab) {
 }
 //Converts image data to image useful for prediction visuals
 function imagedata_to_image(imagedata) {
-    var canvas = document.querySelector('#mainCanvas');
-    var ctx = canvas.getContext('2d');
+    let canvas = document.querySelector('#mainCanvas');
+    let ctx = canvas.getContext('2d');
     canvas.width = imagedata.width;
     canvas.height = imagedata.height;
     ctx.putImageData(imagedata, 0, 0);
     app.image = canvas.toDataURL();
 }
+
 //Creates a visual of a model
 async function createVisual(){
+
 	let visor = tfvis.visor();
 	let modelDisplay = visor.surface({name:"Model Summary", tab:"Model Info"});
 	tfvis.show.modelSummary(modelDisplay,activeModel.model);
@@ -176,9 +179,12 @@ async function TrainModel(){
 	};
     const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
     
-    app.loadingMessage = "Training Please Wait...";
+    app.appState.loadingMessage = "Training Please Wait...";
+    app.appState.isLoading = true;
     await createVisual();
     await activeModel.TrainModel(fitCallbacks,"batch");
+    app.appState.loadingMessage = "";
+    app.appState.isLoading = false;
 }
 //Tests the model off of a random image
 function predictTest(){
@@ -213,7 +219,8 @@ function predictTest(){
         let predictType = types[maxIndex];
         let accuracy = prediction[maxIndex];
 		app.guess = `This is a ${predictType}. I'm ${accuracy}% sure. `;
-		app.loadingMessage = "";
+        app.appState.loadingMessage = "";
+        app.appState.isLoading = false;
        	return predictType;
 }
 //Tests the model off of an uploaded image
@@ -251,11 +258,12 @@ function predictUpload(){
         let predictType = Object.keys(dataDict)[Math.floor(val*typesCount)];
         console.log(predictType);
 		app.guess = `This is a ${predictType}. I'm ${values[0]}% sure. `;
-		app.loadingMessage = "";
+        app.loadingMessage = "";
+        app.appState.isLoading = false;
        	return predictType;
 }
 
 
 import {app} from "./vue.js";
 import {ModelClass} from "./Classes/Model.js";
-export {initModel,loadImages,SaveModel,LoadModel,CreateModel,TrainModel,predictTest,predictUpload};
+export {initModel,loadImages,SaveModel,LoadModel,CreateModel,TrainModel,predictTest,predictUpload, imagedata_to_image};

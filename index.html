@@ -39,10 +39,10 @@
                 <!--<subreddit-template></subreddit-template>-->
             </div>
             <div class="col s4">
-                <h3 class='left-align'>Current Status: {{guess}}</h3>
+                <h3 class='left-align'>Please Train Model</h3>
                 <div class='col s6'>
                     <div id="console">
-                        <img class="responsive-img" id="img" v-bind:src="image" crossorgin="Anonymous" width="500"
+                        <img class="responsive-img center-align" id="img" v-bind:src="image" crossorgin="Anonymous" width="500"
                             height="500" />
                     </div>
                 </div>
@@ -65,9 +65,7 @@
                         </div>
                     </div>
                     <div class='row'>
-                        <div class='col s4'>
-                            <button class="btn waves-effect waves-light" type="submit" @click="create">Create</button>
-                        </div>
+                       
                         <div class='col s4'>
                             <button class="btn waves-effect waves-light" type="submit" @click='run'>Train</button>
                         </div>
@@ -75,10 +73,14 @@
                             <button class="btn waves-effect waves-light" type="submit"
                                 @click='predictImage'>Predict</button>
                         </div>
+                        <div class='col s4'>
+                                <button class="btn waves-effect waves-light" type="submit" @click="">Predict_img</button>
+                            </div>
                     </div>
                     <div class='row'>
                         <div class='col s6'>
-                            <div class="progress" :style="{'visibility': appState.hiddenVal}">
+                                <div class="progress" v-visible="appState.isLoading">
+                            <!--<div class="progress" :style="{'visibility': appState.hiddenVal}">-->
                                 <div class="indeterminate"></div>
                             </div>
                         </div>
@@ -92,15 +94,6 @@
                                     size="50" maxlength="50" autofocus value="Upload image here" /></p>
                         </div>
                     </div>
-
-
-
-
-
-
-
-
-                    <p id="output">{{upload}}</p>
                 </div>
             </div>
         </div>

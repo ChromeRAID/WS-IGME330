@@ -2352,6 +2352,7 @@ audio:not([controls]) {
  * Remove the border on images inside links in IE 10-.
  */
 img {
+  vertical-align: middle;
   border-style: none;
 }
 
@@ -2722,6 +2723,7 @@ i.large {
 
 img.responsive-img,
 video.responsive-video {
+  vertical-align: middle;
   max-width: 100%;
   height: auto;
 }
