@@ -256,7 +256,7 @@ function predictTest(){
         }
         let predictType = types[maxIndex];
         let accuracy = prediction[maxIndex];
-		app.guess = `This is a ${predictType}. I'm ${accuracy}% sure. `;
+		app.guess = `This is a ${predictType}. I'm ${Math.round(accuracy,2)}% sure. `;
         app.appState.loadingMessage = "";
         app.appState.isLoading = false;
        	return predictType;
@@ -267,6 +267,7 @@ function predictUpload(){
     let types = Object.keys(dataDict);
     app.$el.children[2].getContext("2d").drawImage(app.$el.children[1].children[1].children[1].children[0].children[0],0,0,64,64);
     //console.log(app.$el.children[1].children[1].children[1].children[0].children[0]);
+
 
     let data = app.$el.children[2].getContext("2d").getImageData(0,0,64,64);
     let inputArray = [];
@@ -287,7 +288,7 @@ function predictUpload(){
     }
     let predictType = types[maxIndex];
     let accuracy = prediction[maxIndex];
-    app.guess = `This is a ${predictType}. I'm ${accuracy}% sure. `;
+    app.guess = `This is a ${predictType}. I'm ${Math.round(accuracy,2)}% sure. `;
     app.appState.loadingMessage = "";
     app.appState.isLoading = false;
     return predictType;

@@ -2779,6 +2779,7 @@ video.responsive-video {
     overflow: hidden;
     white-space: nowrap;
   }
+  
 }
 
 .breadcrumb {
@@ -2906,6 +2907,11 @@ ul.staggered-list li {
 @media only screen and (min-width: 1201px) {
   .show-on-extra-large {
     display: block !important;
+  }
+}
+@media only screen and (max-width: 1024px){
+  .btn{
+    font-size: 1em;
   }
 }
 
@@ -3433,7 +3439,7 @@ table span.badge {
 .container {
   margin: 0 auto;
   max-width: 1280px;
-  width: 90%;
+  width: 95%;
 }
 
 @media only screen and (min-width: 601px) {

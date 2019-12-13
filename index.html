@@ -11,11 +11,11 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!--Import materialize.css-->
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
-    <link type ='text/css' rel='stylesheet' href='css/main.css'>
+    <link type='text/css' rel='stylesheet' href='css/main.css'>
     <script type="module" src="src/vue.js"></script>
 </head>
 
-<body class ='card-panel blue-grey darken-3'>
+<body class='card-panel blue-grey darken-3'>
     <div class='container' id="root">
         <div class='row'>
             <div class='col s12'>
@@ -31,31 +31,31 @@
                     </div>
                     <div class='col s6'><input class="btn waves-effect waves-light" type="submit" value="Add"
                             @click=addSubreddit></div>
-                    </div>
+                </div>
                 <subreddit-template v-for="sub in subreddits" v-bind:name="sub" v-bind:key="sub"></subreddit-template>
             </div>
-            <div class="col s4">
+            <div class="col s4 ">
                 <h3 class='left-align blue-text text-darken-1'>{{guess}}</h3>
                 <div class='col s12'>
                     <div id="console">
-                        <img class="responsive-img center-align" id="img" v-bind:src="image" crossorgin="Anonymous"/>
+                        <img class="responsive-img center-align" id="img" v-bind:src="image" crossorgin="Anonymous" />
                     </div>
                 </div>
             </div>
             <div class='col s4 '>
                 <div class="input-field left">
                     <div class='row'>
-                            <h3 class='center-align blue-text text-darken-1'>Options</h3>
+                        <h3 class='center-align blue-text text-darken-1'>Options</h3>
                     </div>
                     <!--p id="output"></p>-->
                     <div class='row'>
-                        <div class='col s6'>
+                        <div class='col s6 l5'>
                             <span>Select Epoch</span><br>
                             <select class="browser-default" v-model:value='epochSelected'>
                                 <option v-for='e in epochLimits' v:bind:value='e' v-text='e'>epochs: {{e}}</option>
                             </select>
                         </div>
-                        <div class='col s6'>
+                        <div class='col s6 l5'>
                             <span>Select Data</span><br>
                             <select class="browser-default" v-model:value="dataSelected">
                                 <option v-for='e in dataLimits' v:bind:value='e' v-text='e'></option>
@@ -63,28 +63,34 @@
                         </div>
                     </div>
                     <div class='row'>
-                       
+
                         <div class='col s4'>
                             <button class="btn waves-effect waves-light" type="submit" @click='run'>Train</button>
-                            
+
                         </div>
+
+                    </div>
+                    <div class='row'>
                         <div class='col s4'>
                             <button v-if="trainEnabled" class="btn waves-effect waves-light" type="submit"
                                 @click='predictImage'>Predict</button>
-                                <button v-else="trainEnabled"class="btn waves-effect waves-light btn disabled" type="submit" @click='run'>Predict</button>
+                            <button v-else="trainEnabled" class="btn waves-effect waves-light btn disabled"
+                                type="submit" @click='run'>Predict</button>
                         </div>
                         <div class='col s4'>
                                 <button v-if="predictEnabled" class="btn waves-effect waves-light" type="submit" @click="predictUploadButton">Predict_img</button>
                                 <button v-else="predictEnabled" class="btn waves-effect waves-light btn disabled" type="submit" @click="">Predict_img</button>
                             </div>
+
+
                     </div>
                     <div class='row'>
-                        <div class='col s6'>
-                                <div class="progress" v-visible="appState.isLoading">
+                        <div class='col s5'>
+                            <div class="progress" v-visible="appState.isLoading">
                                 <div class="indeterminate"></div>
                             </div>
                         </div>
-                        <div class='col s6'>
+                        <div class='col s5'>
                             <span>{{appState.loadingMessage}}</span>
                         </div>
                     </div>
@@ -100,7 +106,7 @@
         <canvas id="mainCanvas" width=128 height=128 style="display:none"></canvas>
 
     </div>
-        <!-- #1 - link to Firebase goes here  -->
+    <!-- #1 - link to Firebase goes here  -->
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-database.js"></script>
