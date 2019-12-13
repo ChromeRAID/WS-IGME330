@@ -10,7 +10,7 @@ Vue.component('subredditTemplate', {
 			}
 		}
 	},
-	template: '<div class="row"><div class="col s6"><h6>{{name}}</h6></div><div class="col s6"><input @click=removeSubreddit class="btn waves-effect waves-light" type="Submit" value="Remove"></div></div>'
+	template: '<div class="row card-panel blue-grey darken-1"><div class="col s6"><h6 class="grey-text text-lighten 5">{{name}}</h6></div><div class="col s6"><input @click=removeSubreddit class="btn waves-effect waves-light" type="Submit" value="Remove"></div></div>'
 	//template: '<div><ul><li v-for="sub in subreddits" v-bind:name="sub" v-bind:key="sub">{{name}}</li></ul></div>'
 
 });
@@ -36,7 +36,7 @@ const app = new Vue({
 		selected: 'hound',
 		subreddits: ["dogs", "cats"],
 		url: URL,
-		guess: "WAITING FOR TRAINING",
+		guess: 'Waiting for Training',
 		appState: {loadingMessage: "", isLoading: false },
 		upload: '',
 		image: "https://i.imgur.com/JlUvsxa.jpg",
@@ -52,9 +52,11 @@ const app = new Vue({
 	methods: {
 		LoadStuff(){
 			let settings  = LoadModel(this.userID);
+			if(settings!=undefined){
             this.epochSelected = settings.epochs;
             this.dataSelected = settings.datas;
-            this.subreddits = settings.subreddits;
+			this.subreddits = settings.subreddits;
+			}
 		},
 		async create() {
 		},
@@ -135,10 +137,13 @@ const app = new Vue({
 			localStorage.setItem("sru4607-proj2-image", this.upload);
 		}
 	},
-	created(){
-        this.GetUserID();
-		this.GetSavedImage();
+	created() {
 		this.LoadStuff();
+		this.GetUserID();
+		this.GetSavedImage();
+		if (checkLocalStorage("sru4607-proj2-image")) {
+			this.image = localStorage.getItem("sru4607-proj2-image");
+		}
 	}
 });
 
