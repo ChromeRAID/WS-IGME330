@@ -1,6 +1,7 @@
 *{
     color: #cacaca;
 }
+
 ::placeholder{
     color:#cacaca;
 }
@@ -9,4 +10,10 @@ option, select {
 }
 img {
     vertical-align: middle;
+    width: 100%;
+}
+@media screen and (max-width: 1024px){
+    button{
+        font-size: 1em;
+    }
 }
