@@ -256,7 +256,7 @@ function predictTest(){
         }
         let predictType = types[maxIndex];
         let accuracy = prediction[maxIndex];
-		app.guess = `This is a ${predictType}. I'm ${accuracy}% sure. `;
+		app.guess = `This is a ${predictType}. I'm ${Math.round(values[0],2)}% sure. `;
         app.appState.loadingMessage = "";
         app.appState.isLoading = false;
        	return predictType;
@@ -295,7 +295,7 @@ function predictUpload(){
         let val = values[0];
         let predictType = Object.keys(dataDict)[Math.floor(val*typesCount)];
       //  console.log(predictType);
-		app.guess = `This is a ${predictType}. I'm ${values[0]}% sure. `;
+		app.guess = `This is a ${predictType}. I'm ${Math.round(values[0],2)}% sure. `;
         app.loadingMessage = "";
         app.appState.isLoading = false;
        	return predictType;
