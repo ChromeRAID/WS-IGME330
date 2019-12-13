@@ -30,7 +30,7 @@ let checkLocalStorage = (string) => {
 	}
 	return false;
 }
-
+//The main vue object
 const app = new Vue({
 	el: '#root',
 	data: {
@@ -43,13 +43,17 @@ const app = new Vue({
 		upload: '',
 		image: "https://i.imgur.com/JlUvsxa.jpg",
 		toAdd: "",
+		//Buttons enabled
 		trainEnabled: false,
 		predictEnabled: false,
 		userUpload: false,
+		//Limits are the options for the dropdowns
 		epochLimits: [5, 10, 15, 20, 25],
 		dataLimits: [100, 200, 250, 300, 350],
+		//Selected are the option selected in the dropdowns
 		epochSelected: 15,
 		dataSelected: 250,
+		//ID for saving to firebase
 		userID: 0
 	},
 	computed:{
@@ -70,23 +74,28 @@ const app = new Vue({
 		async create() {
 		},
 		async run() {
+			//If there are subreddits in the list start creating the model
 			if (this.subreddits.length == 0) { return; }
 			initModel();
 		},
 		predictImage() {
+			//Predict of a random image
 			predictTest();
 		},
         predictUploadButton() {
+			//predict of a uploaded image
 			predictUpload();
 		},
 		//adds subreddits to search
 		addSubreddit() {
+			//add to a list from toAdd
 			if (this.toAdd != "" && !this.subreddits.includes(this.toAdd)) {
 				this.subreddits.push(this.toAdd);
 			}
 		},
 		//to-do when file upload changes
 		onFileChange(e){
+			//Upon loading a file create a reader that reads as a data url and call imageLoaded when loaded
 			let reader = new FileReader();
 			reader.readAsDataURL(e.target.files[0]);
 			reader.onload = imageLoaded;
@@ -128,6 +137,7 @@ const app = new Vue({
 		}
 	},
 	created() {
+		//Loads important information
 		this.LoadStuff();
 		this.GetUserID();
 		this.GetSavedImage();
@@ -136,9 +146,11 @@ const app = new Vue({
 		}
 	}
 });
-//to-do on image load
+
 function imageLoaded(e){
+	//Modifies the data url
 	let modDataURL = e.target.result.replace("/^data:image\/(png|jpg);base64,/", ""); //regex parse replace
+	//Sets necessary vue information from loaded url
 	app.upload = modDataURL;
 	app.SetSavedImage();
 	app.image =  modDataURL;
