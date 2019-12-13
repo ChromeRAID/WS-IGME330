@@ -1,14 +1,5 @@
 class ModelClass{
 	
-	//Settings
-		//Epochs
-		//Optimizer
-		//Loss
-		//Metrics
-		//Trained
-	//INput Data
-	//Labels
-	//Model
     constructor(_Epochs,_Inputs,_Labels){
         this.settings = {};
         this.settings.epochs = _Epochs;
@@ -16,14 +7,6 @@ class ModelClass{
         this.labelData = _Labels;
         this.model = tf.sequential();
         this.classNames = [];
-    }
-    
-    LoadSettings(){
-        
-    }
-    
-    GetSettings(){
-        
     }
     
     BuildModel(layers,_loss,_optimizer,_metrics){
@@ -40,11 +23,6 @@ class ModelClass{
             yeildEvery: yeild
         });
     }
-    
-    
-    
-    
-    
     
 }
 
