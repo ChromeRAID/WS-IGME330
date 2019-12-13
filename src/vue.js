@@ -10,7 +10,7 @@ Vue.component('subredditTemplate', {
 			}
 		}
 	},
-	template: '<div class="row card-panel blue-grey darken-1"><div class="col s6"><h6 class="grey-text text-lighten 5">{{name}}</h6></div><div class="col s6"><input @click=removeSubreddit class="btn waves-effect waves-light" type="Submit" value="Remove"></div></div>'
+	template: '<div class="row card-panel blue-grey darken-1"><div class="col s6"><h6>{{name}}</h6></div><div class="col s6"><input @click=removeSubreddit class="btn waves-effect waves-light" type="Submit" value="Remove"></div></div>'
 	//template: '<div><ul><li v-for="sub in subreddits" v-bind:name="sub" v-bind:key="sub">{{name}}</li></ul></div>'
 
 });
@@ -72,40 +72,11 @@ const app = new Vue({
 				this.subreddits.push(this.toAdd);
 			}
 		},
-		/*onFileChange(e) {
-			let img = new Image();
-			
-			img.src = URL.createObjectURL(e.target.files[0])
-			img.createImage();
-			this.upload = img.src;
-			
-			//const x = 500;
-			//imagedata_to_image(app.upload);
-			//this.SetSavedImage();
-			console.log(app.upload);
-			//predictTest();
-			/*let img = document.querySelector('image');
-			let canvas = document.createElement("canvas");
-			let ctx = canvas.getContext("2d");
-
-			// Make sure canvas is as big as the picture
-			canvas.width = x;
-			canvas.height = x;
-
-			// Draw image into canvas element
-			ctx.drawImage(img, 0, 0, x, x);
-
-			// Get canvas contents as a data URL
-			let imgAsDataURL = canvas.toDataURL("image/png");
-			this.upload = imgAsDataURL;
-			this.image = this.upload;
-			this.SetSavedImage();
-
-		},*/
 		onFileChange(e){
 			let reader = new FileReader();
 			reader.readAsDataURL(e.target.files[0]);
 			reader.onload = imageLoaded;
+			
 		},
 		removeSubreddit() {
 			for (let val = 0; val < app.subreddits.length; val++) {

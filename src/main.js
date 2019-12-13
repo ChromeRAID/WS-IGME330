@@ -28,9 +28,9 @@ function XHRRequest(url,load,error){
 //If there is an error this is called
 function dataError(e) {
     imagesToLoad--;
-    console.log("ERROR LOADING DATA");
-    console.log("ABORTING...");
-    console.log("ABORTED");
+   // console.log("ERROR LOADING DATA");
+  //  console.log("ABORTING...");
+   // console.log("ABORTED");
 }
 //If the data is loaded successfully
 function dataLoaded(e) {
@@ -221,6 +221,8 @@ async function TrainModel(){
     await activeModel.TrainModel(fitCallbacks,"batch");
     app.appState.loadingMessage = "";
     app.appState.isLoading = false;
+    app.trainEnabled = true;
+    app.predictEnabled = true;
 }
 //Tests the model off of a random image
 function predictTest(){
@@ -284,15 +286,15 @@ function predictUpload(){
         
         
         const a = prediction;
-        var array = [];
+        let array = [];
         array.push(a);
 
         let values = array.map(t => t.dataSync()[0])
-        console.log(values);
+       // console.log(values);
     
         let val = values[0];
         let predictType = Object.keys(dataDict)[Math.floor(val*typesCount)];
-        console.log(predictType);
+      //  console.log(predictType);
 		app.guess = `This is a ${predictType}. I'm ${values[0]}% sure. `;
         app.loadingMessage = "";
         app.appState.isLoading = false;

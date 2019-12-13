@@ -1,7 +1,7 @@
 /* #2 - The rest of the Firebase setup code goes here */
 // Your web app's Firebase configuration
   // Your web app's Firebase configuration
-var firebaseConfig = {
+const firebaseConfig = {
     apiKey: "AIzaSyAajUn4yXP77CnJZFKQckx9O1NqLr0ynAo",
     authDomain: "fir-exer-f2cb4.firebaseapp.com",
     databaseURL: "https://fir-exer-f2cb4.firebaseio.com",
