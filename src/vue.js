@@ -72,36 +72,6 @@ const app = new Vue({
 				this.subreddits.push(this.toAdd);
 			}
 		},
-		/*onFileChange(e) {
-			let img = new Image();
-			
-			img.src = URL.createObjectURL(e.target.files[0])
-			img.createImage();
-			this.upload = img.src;
-			
-			//const x = 500;
-			//imagedata_to_image(app.upload);
-			//this.SetSavedImage();
-			console.log(app.upload);
-			//predictTest();
-			/*let img = document.querySelector('image');
-			let canvas = document.createElement("canvas");
-			let ctx = canvas.getContext("2d");
-
-			// Make sure canvas is as big as the picture
-			canvas.width = x;
-			canvas.height = x;
-
-			// Draw image into canvas element
-			ctx.drawImage(img, 0, 0, x, x);
-
-			// Get canvas contents as a data URL
-			let imgAsDataURL = canvas.toDataURL("image/png");
-			this.upload = imgAsDataURL;
-			this.image = this.upload;
-			this.SetSavedImage();
-
-		},*/
 		onFileChange(e){
 			let reader = new FileReader();
 			reader.readAsDataURL(e.target.files[0]);

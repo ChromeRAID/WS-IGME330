@@ -28,9 +28,6 @@ function XHRRequest(url,load,error){
 //If there is an error this is called
 function dataError(e) {
     imagesToLoad--;
-    console.log("ERROR LOADING DATA");
-    console.log("ABORTING...");
-    console.log("ABORTED");
 }
 //If the data is loaded successfully
 function dataLoaded(e) {
@@ -43,19 +40,21 @@ function dataLoaded(e) {
 		});
 		return;
 	}
-    let JSONObj = JSON.parse(e.target.responseText);
+    let jsonObj = JSON.parse(e.target.responseText);
 	//If successful but there is no data remove this from the app
-	if(JSONObj.data.length == 0){
+	if(jsonObj.data.length == 0){
 		app.subreddits = app.subreddits.filter(function(value,index, arr){
 			return value!=label;
 		});
 		return;
 	}
 	//If valid 
-    let array = JSONObj.data;
+    let array = jsonObj.data;
     imagesToLoad+=array.length;
     for (let i = 0; i < array.length; i++) {
         let imageUrl = array[i].link;
+        imageUrl = imageUrl.replace("http://","https://")
+        if(imageUrl.includes("/a/")){return;}
         let image = new Image();
         image.crossOrigin = "Anonymous";
         image.src = imageUrl;
@@ -110,7 +109,7 @@ function getInput(amountToGrab) {
 }
 //Converts image data to image useful for prediction visuals
 function imagedata_to_image(imagedata) {
-    let canvas = document.querySelector('#mainCanvas');
+    let canvas = app.$el.children[2];
     let ctx = canvas.getContext('2d');
     canvas.width = imagedata.width;
     canvas.height = imagedata.height;
@@ -213,6 +212,7 @@ async function TrainModel(){
 	const container = {
 		name: 'Model Training', styles: { height: '1000px' }
 	};
+    //Visualization code from TF tutorials by google
     const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
     
     app.appState.loadingMessage = "Training Please Wait...";
@@ -288,11 +288,9 @@ function predictUpload(){
         array.push(a);
 
         let values = array.map(t => t.dataSync()[0])
-        console.log(values);
     
         let val = values[0];
         let predictType = Object.keys(dataDict)[Math.floor(val*typesCount)];
-        console.log(predictType);
 		app.guess = `This is a ${predictType}. I'm ${values[0]}% sure. `;
         app.loadingMessage = "";
         app.appState.isLoading = false;
