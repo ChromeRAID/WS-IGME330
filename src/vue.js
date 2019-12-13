@@ -67,6 +67,9 @@ const app = new Vue({
 		predictImage() {
 			predictTest();
 		},
+        predictUploadButton() {
+			predictUpload();
+		},
 		addSubreddit() {
 			if (this.toAdd != "" && !this.subreddits.includes(this.toAdd)) {
 				this.subreddits.push(this.toAdd);

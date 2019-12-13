@@ -74,7 +74,7 @@
                                 <button v-else="trainEnabled"class="btn waves-effect waves-light btn disabled" type="submit" @click='run'>Predict</button>
                         </div>
                         <div class='col s4'>
-                                <button v-if="predictEnabled" class="btn waves-effect waves-light" type="submit" @click="">Predict_img</button>
+                                <button v-if="predictEnabled" class="btn waves-effect waves-light" type="submit" @click="predictUploadButton">Predict_img</button>
                                 <button v-else="predictEnabled" class="btn waves-effect waves-light btn disabled" type="submit" @click="">Predict_img</button>
                             </div>
                     </div>

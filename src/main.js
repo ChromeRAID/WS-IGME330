@@ -54,7 +54,7 @@ function dataLoaded(e) {
     for (let i = 0; i < array.length; i++) {
         let imageUrl = array[i].link;
         imageUrl = imageUrl.replace("http://","https://")
-        if(imageUrl.includes("/a/")){return;}
+        if(imageUrl.includes("/a/")){imagesToLoad--;continue;}
         let image = new Image();
         image.crossOrigin = "Anonymous";
         image.src = imageUrl;
@@ -263,39 +263,34 @@ function predictTest(){
 }
 //Tests the model off of an uploaded image
 function predictUpload(){
-    let inputArray = [];
-        let typesCount  = Object.keys(dataDict).length;
-        let index = Math.floor(typesCount*Math.random());
-        let type = Object.keys(dataDict)[index];
-        let fullArray = dataDict[type];
-        index = Math.floor(Math.random()*fullArray.length);
         
-        let data = fullArray[index];
-    
-        imagedata_to_image(data);
-    
-        for(let j = 0; j<data.data.length/4; j++){
-            inputArray.push(data.data[j]/255);
-        	inputArray.push(data.data[j+1]/255);
-			inputArray.push(data.data[j+2]/255);
-		}
-        
-        let inputTensor = tf.tensor4d(inputArray,[1,64,64,3]);
-    
-        let prediction = activeModel.predict(inputTensor).asScalar();
-        
-        
-        const a = prediction;
-        let array = [];
-        array.push(a);
+    let types = Object.keys(dataDict);
+    app.$el.children[2].getContext("2d").drawImage(app.$el.children[1].children[1].children[1].children[0].children[0],0,0,64,64);
+    //console.log(app.$el.children[1].children[1].children[1].children[0].children[0]);
 
-        let values = array.map(t => t.dataSync()[0]);
-        let val = values[0];
-        let predictType = Object.keys(dataDict)[Math.floor(val*typesCount)];
-		app.guess = `This is a ${predictType}. I'm ${values[0]}% sure. `;
-        app.loadingMessage = "";
-        app.appState.isLoading = false;
-       	return predictType;
+    let data = app.$el.children[2].getContext("2d").getImageData(0,0,64,64);
+    let inputArray = [];
+    for(let j = 0; j<data.data.length/4; j++){
+        inputArray.push(data.data[j]/255);
+        inputArray.push(data.data[j+1]/255);
+        inputArray.push(data.data[j+2]/255);
+    }
+
+    let inputTensor = tf.tensor4d(inputArray,[1,64,64,3]);
+    let prediction = activeModel.model.predict(inputTensor).dataSync();
+
+    let maxIndex = 0;
+    for(let k = 1; k<prediction.length; k++){
+        if(prediction[k] > prediction[maxIndex]){
+            maxIndex = k;
+        }
+    }
+    let predictType = types[maxIndex];
+    let accuracy = prediction[maxIndex];
+    app.guess = `This is a ${predictType}. I'm ${accuracy}% sure. `;
+    app.appState.loadingMessage = "";
+    app.appState.isLoading = false;
+    return predictType;
 }
 
 
