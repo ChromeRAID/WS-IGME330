@@ -50,8 +50,11 @@ const app = new Vue({
 		userID: 0
 	},
 	methods: {
-		LoadStuff() {
-			LoadModel();
+		LoadStuff(){
+			let settings  = LoadModel(this.userID);
+            this.epochSelected = settings.epochs;
+            this.dataSelected = settings.datas;
+            this.subreddits = settings.subreddits;
 		},
 		async create() {
 		},
@@ -132,13 +135,10 @@ const app = new Vue({
 			localStorage.setItem("sru4607-proj2-image", this.upload);
 		}
 	},
-	created() {
-		this.LoadStuff();
-		this.GetUserID();
+	created(){
+        this.GetUserID();
 		this.GetSavedImage();
-		if (checkLocalStorage("sru4607-proj2-image")) {
-			this.image = localStorage.getItem("sru4607-proj2-image");
-		}
+		this.LoadStuff();
 	}
 });
 

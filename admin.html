@@ -7,8 +7,22 @@
 
     </head>
 
-    <body>
-
+    <body >
+      <h1>ADMIN</h1>
+       <div id="root">
+        <h2>Epoch Chart</h2>
+        <ul>
+            <li v-for="(value,name) in epochHist">{{name}}: {{value}}</li>
+        </ul>
+        <h2>Data Amount Chart</h2>
+        <ul>
+            <li v-for="(value,name) in dataHist">{{name}}: {{value}}</li>
+        </ul>
+        <h2>Epoch Chart</h2>
+        <ul>
+            <li v-for="(value,name) in subHist">{{name}}: {{value}}</li>
+        </ul>
+        </div>
         <!-- The core Firebase JS SDK is always required and must be listed first -->
         <script
             src="https://www.gstatic.com/firebasejs/7.5.0/firebase-app.js"></script>
@@ -16,29 +30,32 @@
             src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
         <!-- TODO: Add SDKs for Firebase products that you want to use
      https://firebase.google.com/docs/web/setup#available-libraries -->
-
+        <script src=src/firebase.js></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         <script>
-            // Your web app's Firebase configuration
-            let firebaseConfig = {
-                apiKey: "AIzaSyB-CPEaV8DhLgQ25Ey5KuklRer7ZFjGPyE",
-                authDomain: "high-scores-e29c2.firebaseapp.com",
-                databaseURL: "https://high-scores-e29c2.firebaseio.com",
-                projectId: "high-scores-e29c2",
-                storageBucket: "high-scores-e29c2.appspot.com",
-                messagingSenderId: "12299398558",
-                appId: "1:12299398558:web:bf8ce5efcf8c4be0297a8f"
-            };
-            // Initialize Firebase
-            firebase.initializeApp(firebaseConfig);
-            console.log(firebase); // verify that firebase is loaded by logging the global it created for us
+            const app = new Vue({
+                el: '#root',
+                data: {
+                    epochHist: {},
+                    dataHist: {},
+                    subHist: {}
+                }
+            });
 
-            // #4 This is where the magic happens!
-            //firebase.database().ref("scores2").on("value", dataChanged, firebaseError);
-
-
-
+            database.ref("stats").on("value",dataChanged,firebaseError);
+                         
             function firebaseError(error) {
                 console.log(error);
+            }
+            
+            function dataChanged(data){
+                console.log(data.val());
+                app.epochHist = data.val().epochHist;
+                app.dataHist = data.val().dataHist;
+                app.subHist = data.val().subreddits;
+                //Epochs Used
+                //Data Limit Used
+                //Subreddit List plus usage
             }
         </script>
     </body>
