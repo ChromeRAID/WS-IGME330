@@ -42,7 +42,10 @@ const app = new Vue({
 	},
 	methods: {
 		LoadStuff(){
-			LoadModel();
+			let settings  = LoadModel(this.userID);
+            this.epochSelected = settings.epochs;
+            this.dataSelected = settings.datas;
+            this.subreddits = settings.subreddits;
 		},
 		async create() {
 		},
@@ -94,9 +97,9 @@ const app = new Vue({
 		}
 	},
 	created(){
-		this.LoadStuff();
-		this.GetUserID();
+        this.GetUserID();
 		this.GetSavedImage();
+		this.LoadStuff();
 	}
 });
 

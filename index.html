@@ -107,22 +107,15 @@
         <canvas id="mainCanvas" width=128 height=128 style="display:none"></canvas>
 
     </div>
-    <script type="module" src="src/main.js"></script>
-
-    <!-- #1 - link to Firebase goes here  -->
+        <!-- #1 - link to Firebase goes here  -->
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-database.js"></script>
+    <script src="src/firebase.js"></script>
+    <script type="module" src="src/main.js"></script>
     <!--Tensorflow-->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.0.2/dist/tfjs-vis.umd.min.js"></script>
-    <script>
-        document.onreadystatechange = loaded;
-        function loaded(){
-            
-            console.log("document: "+document.readyState);
-        }
-    </script>
 
 </body>
 

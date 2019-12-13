@@ -126,14 +126,49 @@ async function createVisual(){
 
 //Saves a model to firebase
 function SaveModel(){
-    //Save stuff to firebase
+    let settings = {};
+    settings.epochs = app.epochSelected;
+    settings.datas = app.dataSelected;
+    settings.subreddits = app.subreddits;
+    localStorage.setItem("sru-4607-proj2-settings",JSON.stringify(settings));
+    
+    database.ref("stats/epochHist/"+app.epochSelected).transaction(function(currentVal){
+        if(currentVal == null){
+            return 1;
+        }
+        return currentVal+1; 
+    });
+    
+    database.ref("stats/dataHist/"+app.dataSelected).transaction(function(currentVal){
+        if(currentVal == null){
+            return 1;
+        }
+        return currentVal+1; 
+    });
+    for(let i = 0; i<app.subreddits.length; i++){
+        database.ref("stats/subreddits/"+app.subreddits[i]).transaction(function(currentVal){
+            if(currentVal == null){
+                return 1;
+            }
+            return currentVal+1; 
+        });
+    }
 }
 //Loads a model from firebase
-function LoadModel(){
-    //Get stuff from firebase   
+function LoadModel(userID){
+    let settings = JSON.parse(localStorage.getItem("sru-4607-proj2-settings"));
+    if(settings==undefined){return;}
+    return settings;
+}
+function GetModel(data){
+    if(data.val()!=null){
+        activeModel = data.val().savedModel;
+        activeModel.LoadSettings();
+    }
 }
 //Creates a new model object
 function initModel(){
+
     imagesToLoad = 0;
     dataDict = {};
     loadImages();
@@ -152,8 +187,9 @@ function checkIfFinished(){
 }
 //Creates a model based on settings
 function CreateModel(){
-    let inputData = getInput(250);
-    activeModel = new ModelClass(15,inputData[0],inputData[1]);
+    SaveModel();
+    let inputData = getInput(app.dataSelected);
+    activeModel = new ModelClass(app.epochSelected,inputData[0],inputData[1]);
     let layers = [];
     layers.push(tf.layers.conv2d({filters:8, kernelSize:5,padding:'same',activation:'relu',inputShape:[64,64,3]}));
 	layers.push(tf.layers.maxPooling2d({poolSize:2}));
@@ -179,6 +215,7 @@ async function TrainModel(){
     app.loadingMessage = "Training Please Wait...";
     await createVisual();
     await activeModel.TrainModel(fitCallbacks,"batch");
+    SaveModel();
 }
 //Tests the model off of a random image
 function predictTest(){
