@@ -221,6 +221,8 @@ async function TrainModel(){
     await activeModel.TrainModel(fitCallbacks,"batch");
     app.appState.loadingMessage = "";
     app.appState.isLoading = false;
+    app.trainEnabled = true;
+    app.predictEnabled = true;
 }
 //Tests the model off of a random image
 function predictTest(){
@@ -284,11 +286,10 @@ function predictUpload(){
         
         
         const a = prediction;
-        var array = [];
+        let array = [];
         array.push(a);
 
-        let values = array.map(t => t.dataSync()[0])
-    
+        let values = array.map(t => t.dataSync()[0]);
         let val = values[0];
         let predictType = Object.keys(dataDict)[Math.floor(val*typesCount)];
 		app.guess = `This is a ${predictType}. I'm ${values[0]}% sure. `;

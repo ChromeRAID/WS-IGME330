@@ -10,7 +10,7 @@ Vue.component('subredditTemplate', {
 			}
 		}
 	},
-	template: '<div class="row card-panel blue-grey darken-1"><div class="col s6"><h6 class="grey-text text-lighten 5">{{name}}</h6></div><div class="col s6"><input @click=removeSubreddit class="btn waves-effect waves-light" type="Submit" value="Remove"></div></div>'
+	template: '<div class="row card-panel blue-grey darken-1"><div class="col s6"><h6>{{name}}</h6></div><div class="col s6"><input @click=removeSubreddit class="btn waves-effect waves-light" type="Submit" value="Remove"></div></div>'
 	//template: '<div><ul><li v-for="sub in subreddits" v-bind:name="sub" v-bind:key="sub">{{name}}</li></ul></div>'
 
 });
@@ -76,6 +76,7 @@ const app = new Vue({
 			let reader = new FileReader();
 			reader.readAsDataURL(e.target.files[0]);
 			reader.onload = imageLoaded;
+			
 		},
 		removeSubreddit() {
 			for (let val = 0; val < app.subreddits.length; val++) {

@@ -1,0 +1,12 @@
+*{
+    color: #cacaca;
+}
+::placeholder{
+    color:#cacaca;
+}
+option, select {
+    color: #212121;
+}
+img {
+    vertical-align: middle;
+}
