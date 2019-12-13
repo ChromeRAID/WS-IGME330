@@ -43,6 +43,7 @@ const app = new Vue({
 		toAdd: "",
 		trainEnabled: false,
 		predictEnabled: false,
+		userUpload: false,
 		epochLimits: [5, 10, 15, 20, 25],
 		dataLimits: [100, 200, 250, 300, 350],
 		epochSelected: 15,
@@ -100,6 +101,9 @@ const app = new Vue({
 		GetSavedImage() {
 			if (checkLocalStorage("sru4607-proj2-image")) {
 				this.upload = localStorage.getItem("sru4607-proj2-image");
+				if(this.trainEnabled){
+					this.userUpload = true;
+				}
 			}
 			else {
 				this.upload = this.image;
@@ -126,6 +130,10 @@ function imageLoaded(e){
 	app.upload = modDataURL;
 	app.SetSavedImage();
 	app.image =  modDataURL;
+	if(app.trainEnabled){
+		app.userUpload = true;
+	}
+	
 }
 
 import { initModel, LoadModel, predictTest, predictUpload, TrainModel, CreateModel } from "./main.js"
