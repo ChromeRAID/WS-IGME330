@@ -50,6 +50,11 @@ const app = new Vue({
 		dataSelected: 250,
 		userID: 0
 	},
+	computed:{
+		UserPredictEnabled: function(){
+			return (this.trainEnabled && this.userUpload);
+		}
+	},
 	methods: {
 		LoadStuff(){
 			let settings  = LoadModel(this.userID);
@@ -83,9 +88,9 @@ const app = new Vue({
 			
 		},
 		removeSubreddit() {
-			for (let val = 0; val < app.subreddits.length; val++) {
-				if (app.subreddits[val] == this.name) {
-					app.subreddits.splice(val, 1);
+			for (let val = 0; val < this.subreddits.length; val++) {
+				if (this.subreddits[val] == this.name) {
+					this.subreddits.splice(val, 1);
 				}
 			}
 		},
@@ -101,9 +106,7 @@ const app = new Vue({
 		GetSavedImage() {
 			if (checkLocalStorage("sru4607-proj2-image")) {
 				this.upload = localStorage.getItem("sru4607-proj2-image");
-				if(this.trainEnabled){
-					this.userUpload = true;
-				}
+				this.userUpload = true;
 			}
 			else {
 				this.upload = this.image;
@@ -130,9 +133,7 @@ function imageLoaded(e){
 	app.upload = modDataURL;
 	app.SetSavedImage();
 	app.image =  modDataURL;
-	if(app.trainEnabled){
-		app.userUpload = true;
-	}
+	app.userUpload = true;
 	
 }
 
